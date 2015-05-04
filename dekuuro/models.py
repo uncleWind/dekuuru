@@ -4,20 +4,14 @@ from django.contrib.auth.models import User
 # Create your models here.
 class Board(models.Model):
 	name = models.CharField(max_length=50)
-	board_tag = models.CharField(max_length=15, blank=False)
+	board_tag = models.CharField(max_length=15, blank=False, unique=True)
 
 class BoardSubscription(models.Model):
 	user = models.ForeignKey(User, blank=False)
 	board = models.ForeignKey(Board, blank=False)
 	
 	class Meta:
-		unique_together = ('user', 'board',)	
-	
-#class User(models.Model):
-#	name = models.CharField(max_length=20, blank=False, unique=True)
-#	password = models.CharField(max_length=100, blank=False)
-#	mail = models.EmailField(blank=False)
-#	subscribed_boards = models.ManyToManyField(Board)
+		unique_together = ('user', 'board',)
 	
 class Tag(models.Model):
 	board = models.ForeignKey(Board)
@@ -25,6 +19,9 @@ class Tag(models.Model):
 	
 	class Meta:
 		unique_together = ('board', 'name',)
+	
+	def __unicode__(self):
+		return u'%s:%s' (self.board.name, self.name)
 
 class Image(models.Model):
 	URI = models.FileField(max_length=400, blank=False)
@@ -43,7 +40,6 @@ class Comment(models.Model):
 class Profile(models.Model):
 	user = models.ForeignKey(User, blank=False)
 	name = models.CharField(max_length=50, blank=False)
-	def_search = models.CharField(max_length=320)
 	filtered_tags = models.ManyToManyField(Tag)
 	
 class BoardUsers(models.Model):
