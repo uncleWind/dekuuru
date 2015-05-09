@@ -2,6 +2,7 @@ from django.shortcuts import render
 from dekuuro.forms import *
 from dekuuro.models import *
 from django.http import HttpResponseRedirect
+from django.contrib.auth import logout, authenticate
 
 # Create your views here.
 
@@ -14,6 +15,26 @@ def testView(Request):
 		formset = BoardForm()
 	return render(Request, 'test.html', { 'formset' : formset })
 
+def loginView(Request):
+	logout(Request)
+	if Request.method == 'POST':
+		formset = LoginForm(Request.POST)
+		if formset.is_valid():
+			username = formset.cleaned_data['username']
+			password = formset.cleaned_data['password']
+			user = authenticate(username=username, password=password)
+			if user is not None:
+				if user.is_active:
+					login(Request, user)
+					return HttpResponseRedirect('') #somwhere TODO
+			#	else:
+			#		return HttpResponseRedirect('') #User is inactive ERROR TODO
+			#else:
+			#	return HttpResponseRedirect('') #No user exists ERROR TODO
+	else:
+		formset = LoginForm()
+	return render(Request, 'login.html', { 'formset' : formset.as_p()})
+	
 #TODO templates
 def mainPageView(Request):
 	return render(Request, 'main.html')
