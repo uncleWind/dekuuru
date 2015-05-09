@@ -2,6 +2,7 @@ from django import forms
 from django.forms import ModelForm
 from dekuuro.models import *
 from django.contrib.auth.models import User
+from django.utils.translation import ugettext_lazy as _
 
 class CommentForm(ModelForm):
 	class Meta:
@@ -21,17 +22,23 @@ class ImageForm(ModelForm):
 class UserForm(ModelForm):
 	class Meta:
 		model = User
-		fields = ('name', 'password', 'mail')
+		fields = ('username', 'password', 'email')
 		widgets = {
 			'password' : forms.PasswordInput(),
 		}
 
-class LoginForm(ModelForm)
+class LoginForm(ModelForm):
 	class Meta:
 		model = User
-		fields = ('name', 'password')
+		fields = ('username', 'password')
 		widgets = {
 			'password' : forms.PasswordInput(),
+		}
+		labels = {
+			'password' : _('Password:')
+		}
+		help_texts = {
+			'username' : _('')
 		}
 
 class BoardForm(ModelForm):

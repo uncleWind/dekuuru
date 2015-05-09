@@ -1,16 +1,38 @@
 <html>
 	<head>
+		<!-- Title customisable per page. -->
 		<title>Dekuuru - {% block title %}{% endblock title %}</title>
+		<!-- css goes here TODO -->
 	</head>
 	<body>
+		<!-- Main logo bar. -->
 		<div id="logo">
-			<h1>DEKUURU [TODO:logo]</h1>
+			<h1>DEKUURU [TODO:logo or sth]</h1>
 		</div>
+		<!-- Meat of the site. -->
 		<div id="content">
 			{% block content %}{% endblock content %}
 		</div>
-		<div id="sidebar">
-			
+		<!-- Sidebar main div. -->
+		<div id="sidebarCore">
+			<!-- User panel. -->
+			<div id="userPanel">
+				TODO
+			</div>
+			<!-- Site navigation. -->
+			<div id="globalContent">
+				<!-- Search bar goes somewhere here. TODO -->
+				<a href="">MainPage(TODO)</a>
+				<a href="">Boards</a>
+				<a href="">Create board</a>
+				<a href="">Global link</a>
+				<a href="">Global link</a>
+				<a href="">Global link</a>
+			</div>
+			<!-- Customisable per page. -->
+			<div id="localContent">
+				{% block sidebarLocal %}{% endblock sidebarLocal %}
+			</div>
 		</div>
 	</body>
 </html>
