@@ -28,10 +28,21 @@ def loginView(Request):
 				if user.is_active:
 					login(Request, user)
 					return HttpResponseRedirect('') #somwhere TODO
-			loginError = 'Login data incorrect'
+			loginError = 'Login data incorrect.'
 	else:
 		formset = LoginForm()
 	return render(Request, 'login.html', { 'formset' : formset.as_p(), 'loginError' : loginError})
+
+@login_required(login_url='login/')
+def createBoardView(Request):
+	if Request.method == 'POST':
+		formset = BoardForm(Request.POST)
+		if formset.is_valid():
+			#TODO Validate, Give admin rights, set stuff
+			return HttpResponseRedirect('')
+	else:
+		formset = BoardForm()
+	return render(Request, 'createBoard.html', { 'formset' : formset.as_p() })
 	
 #TODO templates
 def mainPageView(Request):
@@ -57,9 +68,6 @@ def imageDetailsView(Request):
 	
 def subscriptionsView(Request):
 	return render(Request, 'subscriptions.html')
-	
-def createBoardView(Request):
-	return render(Request, 'createBoard.html')
 	
 def boardTagsView(Request):
 	return render(Request, 'boardTags.html')

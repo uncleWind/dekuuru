@@ -9,4 +9,5 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^test/', 'dekuuro.views.testView', name='test'),
     url(r'^login/', 'dekuuro.views.loginView', name='login'),
+    url(r'^createboard/', 'dekuuro.views.createBoardView', name='createBoard'),
 ]
