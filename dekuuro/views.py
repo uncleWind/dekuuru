@@ -17,6 +17,7 @@ def testView(Request):
 
 def loginView(Request):
 	logout(Request)
+	loginError = ''
 	if Request.method == 'POST':
 		formset = LoginForm(Request.POST)
 		if formset.is_valid():
@@ -27,13 +28,10 @@ def loginView(Request):
 				if user.is_active:
 					login(Request, user)
 					return HttpResponseRedirect('') #somwhere TODO
-			#	else:
-			#		return HttpResponseRedirect('') #User is inactive ERROR TODO
-			#else:
-			#	return HttpResponseRedirect('') #No user exists ERROR TODO
+			loginError = 'Login data incorrect'
 	else:
 		formset = LoginForm()
-	return render(Request, 'login.html', { 'formset' : formset.as_p()})
+	return render(Request, 'login.html', { 'formset' : formset.as_p(), 'loginError' : loginError})
 	
 #TODO templates
 def mainPageView(Request):

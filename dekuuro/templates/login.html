@@ -7,12 +7,7 @@
 <form method="post" action="{% url 'login' %}">
 	{% csrf_token %}
 	{{ formset }}
-	<!--
-	{{ formset.management_form }}
-	{% for form in formset %}
-		{{ form }}
-	{% endfor %}
-	-->
 	<input type="submit" value="Login"/>
+	<h3>{{ loginError }}</h3>
 </form>
 {% endblock %}
