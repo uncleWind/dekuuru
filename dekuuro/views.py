@@ -3,6 +3,7 @@ from dekuuro.forms import *
 from dekuuro.models import *
 from django.http import HttpResponseRedirect
 from django.contrib.auth import logout, authenticate
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -44,12 +45,19 @@ def createBoardView(Request):
 		formset = BoardForm()
 	return render(Request, 'createBoard.html', { 'formset' : formset.as_p() })
 	
+def registrationView(Request):
+	if Request.method == 'POST':
+		formset = UserForm(Request.POST)
+		if formset.is_valid():
+			#TODO Validate, Give admin rights, set stuff
+			return HttpResponseRedirect('')
+	else:
+		formset = UserForm()
+	return render(Request, 'register.html', { 'formset' : formset.as_p() })
+	
 #TODO templates
 def mainPageView(Request):
 	return render(Request, 'main.html')
-	
-def registrationView(Request):
-	return render(Request, 'register.html')
 	
 def boardView(Request):
 	return render(Request, 'board.html')
