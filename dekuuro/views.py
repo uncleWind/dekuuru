@@ -28,7 +28,7 @@ def loginView(Request):
 			if user is not None:
 				if user.is_active:
 					login(Request, user)
-					return HttpResponseRedirect('home')
+					return HttpResponseRedirect('/')
 			loginError = 'Login data incorrect.'
 	else:
 		formset = LoginForm()

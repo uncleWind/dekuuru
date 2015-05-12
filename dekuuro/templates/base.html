@@ -30,17 +30,16 @@
 				<!-- Search bar goes somewhere here. TODO -->
 				<ul>
 					<li>
-						<a href="">MainPage</a>
+						<a href="{% url 'home' %}">MainPage</a>
 					</li>
 					<li>
 						<a href="">Boards</a>
 					</li>
-					<!-- Only for registerd users uncomment when ready-->
-					<!-- % if user.is_authenticated % -->
+					{% if user.is_authenticated %}
 					<li>
 						<a href="{% url 'createBoard' %}">Create board</a>
 					</li>
-					<!-- % endif % -->
+					{% endif %}
 					<li>
 						<a href="">Global link</a>
 					</li>
