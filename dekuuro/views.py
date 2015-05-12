@@ -67,7 +67,7 @@ def boardTagsView(Request):
 	return render(Request, 'boardTags.html')
 	
 def searchView(Request):
-	return render(Request, 'searchView.html')
+	return render(Request, 'search.html')
 	
 def inviteUsersView(Request):
 	return render(Request, 'inviteUsers.html')
