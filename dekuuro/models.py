@@ -5,6 +5,9 @@ from django.contrib.auth.models import User
 class Board(models.Model):
 	name = models.CharField(max_length=50)
 	board_tag = models.CharField(max_length=15, blank=False, unique=True)
+	
+	def __unicode__(self):
+		return self.name
 
 class BoardSubscription(models.Model):
 	user = models.ForeignKey(User, blank=False)

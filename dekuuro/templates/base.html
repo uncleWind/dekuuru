@@ -17,17 +17,40 @@
 		<div id="sidebarCore">
 			<!-- User panel. -->
 			<div id="userPanel">
-				TODO
+				{% if user.is_authenticated %}
+					<a href="">{{ user.get_username }}</a>
+					<a href="">Logout</a>
+				{% else %}
+					<a href="{% url 'login' %}">Login</a>
+					<a href="{% url 'register' %}">Register</a>
+				{% endif %}
 			</div>
 			<!-- Site navigation. -->
 			<div id="globalContent">
 				<!-- Search bar goes somewhere here. TODO -->
-				<a href="">MainPage(TODO)</a>
-				<a href="">Boards</a>
-				<a href="">Create board</a>
-				<a href="">Global link</a>
-				<a href="">Global link</a>
-				<a href="">Global link</a>
+				<ul>
+					<li>
+						<a href="">MainPage</a>
+					</li>
+					<li>
+						<a href="">Boards</a>
+					</li>
+					<!-- Only for registerd users uncomment when ready-->
+					<!-- % if user.is_authenticated % -->
+					<li>
+						<a href="{% url 'createBoard' %}">Create board</a>
+					</li>
+					<!-- % endif % -->
+					<li>
+						<a href="">Global link</a>
+					</li>
+					<li>
+						<a href="">Global link</a>
+					</li>
+					<li>
+						<a href="">Global link</a>
+					</li>
+				</ul>
 			</div>
 			<!-- Customisable per page. -->
 			<div id="localContent">
