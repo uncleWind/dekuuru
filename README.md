@@ -8,3 +8,5 @@ Quick insight at what a dekuuru could be. It could be a private booru. Well, you
 - As of tags... we'll probably let user make a full list of ignored tags. Or did it work another way? Have to double-check that. That's still a thing to think about. Probably with a nice cup of coffee. Sorry, tea.
 - Maybe... we've overlooked that one? Or something else? But it would be nice if we would add a NSFW checkmark for a tag. User could just set option to cover/hide NSFW tags for one of her profiles with one single click. Ignore list could be auto-generated then.
 - Stuff stuff stuff it's half past 11 pm leave me alone I want to sleep. This sentence shouldn't be in here, like, such sentences shouldn't be in any serious readme.
+
+Django version 1.8.1
