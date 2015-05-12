@@ -7,8 +7,8 @@ urlpatterns = [
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^test/', 'dekuuro.views.testView', name='test'),
     url(r'^login/', 'dekuuro.views.loginView', name='login'),
+    url(r'^logout/', 'dekuuro.views.logoutView', name='logout'),
     url(r'^createboard/', 'dekuuro.views.createBoardView', name='createBoard'),
     url(r'^register/', 'dekuuro.views.registrationView', name='register'),
     url(r'^$', 'dekuuro.views.mainPageView', name='home'),

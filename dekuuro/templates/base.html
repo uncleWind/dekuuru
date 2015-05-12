@@ -19,7 +19,10 @@
 			<div id="userPanel">
 				{% if user.is_authenticated %}
 					<a href="">{{ user.get_username }}</a>
-					<a href="">Logout</a>
+					<a href="{% url 'logout' %}">Logout</a>
+					{% if user.is_staff %}
+						<a href="/admin">Admin</a>
+					{% endif %}
 				{% else %}
 					<a href="{% url 'login' %}">Login</a>
 					<a href="{% url 'register' %}">Register</a>
@@ -36,19 +39,10 @@
 						<a href="">Boards</a>
 					</li>
 					{% if user.is_authenticated %}
-					<li>
-						<a href="{% url 'createBoard' %}">Create board</a>
-					</li>
+						<li>
+							<a href="{% url 'createBoard' %}">Create board</a>
+						</li>
 					{% endif %}
-					<li>
-						<a href="">Global link</a>
-					</li>
-					<li>
-						<a href="">Global link</a>
-					</li>
-					<li>
-						<a href="">Global link</a>
-					</li>
 				</ul>
 			</div>
 			<!-- Customisable per page. -->

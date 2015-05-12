@@ -7,15 +7,6 @@ from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
-def testView(Request):
-	if Request.method == 'POST':
-		formset = BoardForm(Request.POST)
-		if formset.is_valid():
-			return HttpResponseRedirect('')
-	else:
-		formset = BoardForm()
-	return render(Request, 'test.html', { 'formset' : formset })
-
 def loginView(Request):
 	logout(Request)
 	loginError = ''
@@ -33,6 +24,10 @@ def loginView(Request):
 	else:
 		formset = LoginForm()
 	return render(Request, 'login.html', { 'formset' : formset.as_p(), 'loginError' : loginError})
+
+def logoutView(Request):
+	logout(Request)
+	return HttpResponseRedirect('/')
 
 @login_required(login_url='login')
 def createBoardView(Request):
