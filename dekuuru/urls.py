@@ -1,5 +1,6 @@
-from django.conf.urls import include, url
+from django.conf.urls import include, url, patterns
 from django.contrib import admin
+from django.conf import settings
 
 urlpatterns = [
     # Examples:
@@ -13,7 +14,7 @@ urlpatterns = [
     url(r'^register/', 'dekuuro.views.registrationView', name='register'),
     url(r'^$', 'dekuuro.views.mainPageView', name='home'),
     url(r'^board/(?P<boardTag>[a-zA-Z]+)/$', 'dekuuro.views.boardView', name='board'),
-    url(r'^addimage/', 'dekuuro.views.addImageView', name='addImage'),
+    url(r'^board/(?P<boardTag>[a-zA-Z]+)/addimage/', 'dekuuro.views.addImageView', name='addImage'),
     url(r'^profiles/', 'dekuuro.views.profilesView', name='profiles'),
     url(r'^profile/', 'dekuuro.views.profileView', name='profile'),
     url(r'^board/(?P<boardTag>[a-zA-Z]+)/(?P<boardImageID>d+)/$', 'dekuuro.views.imageDetailsView', name='imageDetails'),
@@ -23,3 +24,9 @@ urlpatterns = [
     url(r'^inviteusers/(?P<boardTag>[a-zA-Z]+)/$', 'dekuuro.views.inviteUsersView', name='inviteUsers'),
     url(r'^userprofile/(?P<username>[a-zA-Z]+)/$', 'dekuuro.views.userProfileView', name='userProfile'),
 ]
+
+if settings.DEBUG:
+    # static files (images, css, javascript, etc.)
+    urlpatterns += patterns('',
+        (r'^media/(?P<path>.*)$', 'django.views.static.serve', {
+        'document_root': settings.MEDIA_ROOT}))

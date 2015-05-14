@@ -1,6 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django_thumbs.db.models import ImageWithThumbsField
+import os
+import uuid
+
+def imageUpload(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = "%s.%s" % (uuid.uuid4(), ext)
+    return os.path.join('upload/img', filename)
 
 # Create your models here.
 class Board(models.Model):
@@ -25,15 +32,29 @@ class Tag(models.Model):
 		unique_together = ('board', 'name',)
 	
 	def __unicode__(self):
-		return u'%s:%s' (self.board.name, self.name)
+		return '%s:%s' % (self.board.name, self.name)
 
 class Image(models.Model):
-	URI = ImageWithThumbsField(sizes=(200,200))
+	URI = ImageWithThumbsField(upload_to=imageUpload , sizes=((200,200),))
 	upload_date = models.DateTimeField(auto_now_add=True)
 	uploader = models.ForeignKey(User, blank=False)
 	board = models.ForeignKey(Board, blank=False)
-	boardID = models.IntegerField(blank=False)
+	boardID = models.IntegerField(blank=True, null=True)
 	tags = models.ManyToManyField(Tag)
+	
+	class Meta:
+		unique_together = ('board', 'boardID',)
+	
+	def save(self, *args, **kwargs):
+		if self.__class__.objects.filter(board=self.board).count() == 0:
+			BID = 0
+		else:
+			BID = self.__class__.objects.filter(board=self.board).aggreagate.max('boardID') + 1
+		self.boardID = BID
+		super(self.__class__, self).save(*args, **kwargs)
+		
+	#def __unicode__(self):
+	#	return self.id
 	
 class Comment(models.Model):
 	poster = models.ForeignKey(User, blank=False)
@@ -56,3 +77,9 @@ class BoardUsers(models.Model):
 	board = models.ForeignKey(Board, blank=False)
 	user = models.ForeignKey(User, blank=False)
 	priviledge_level = models.CharField(max_length=3, choices=PRIVILEDGES, blank=False)
+	
+	class Meta:
+		unique_together = ('board', 'user',)
+		
+	def __unicode__(self):
+		return u'%s - %s' (self.board, self.user)

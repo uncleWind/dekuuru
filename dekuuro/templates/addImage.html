@@ -3,5 +3,10 @@
 {% block title %}Add Image{% endblock %}
 
 {% block content %}
-<h1>Test content</h1>
+	<h2>Upload Image</h2>
+	<form enctype="multipart/form-data" method="post" url="/board/{{ boardTag }}/addimage/">
+		{% csrf_token %}
+		{{ formset }}
+		<input type="submit" value="Upload"/>
+	</form>
 {% endblock %}
