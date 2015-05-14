@@ -34,8 +34,10 @@ def createBoardView(Request):
 	if Request.method == 'POST':
 		formset = BoardForm(Request.POST)
 		if formset.is_valid():
-			#TODO Validate, Give admin rights, set stuff
-			return HttpResponseRedirect('')
+			newBoard = formset.save()
+			boardUsr = BoardUsers(board=newBoard, user=Request.user, priviledge_level='ADM')
+			boardUsr.save()
+			return HttpResponseRedirect('/board/%s/' % (newBoard.board_tag))
 	else:
 		formset = BoardForm()
 	return render(Request, 'createBoard.html', { 'formset' : formset.as_p() })
@@ -50,15 +52,28 @@ def registrationView(Request):
 		formset = UserForm()
 	return render(Request, 'register.html', { 'formset' : formset.as_p() })
 	
+def boardView(Request, boardTag):
+	currBoard = Board.objects.get(board_tag=boardTag)
+	images = Image.objects.filter(board=currBoard)
+	return render(Request, 'board.html', {	'images' : images , 'board' : currBoard})
+
+@login_required(login_url='login')
+def addImageView(Request, boardTag):
+	if Request.method == 'POST':
+		formset = ImageForm(Request.POST, Request.FILES)
+		if formset.is_valid():
+			newImg = formset.save(commit=False)
+			newImg.board = Board.objects.get(board_tag=boardTag)
+			newImg.uploader = Request.user
+			newImg.save()
+			return HttpResponseRedirect('/board/%s/' % (boardTag))
+	else:
+		formset = ImageForm()
+	return render(Request, 'addImage.html', { 'formset' : formset.as_p() , 'boardTag' : boardTag})
+			
 #TODO templates
 def mainPageView(Request):
 	return render(Request, 'main.html')
-	
-def boardView(Request):
-	return render(Request, 'board.html')
-
-def addImageView(Request):
-	return render(Request, 'addImage.html')
 
 def profilesView(Request):
 	return render(Request, 'profiles.html')

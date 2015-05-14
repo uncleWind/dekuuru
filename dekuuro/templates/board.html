@@ -1,7 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}Board{% endblock %}
+{% block title %}/{{ board.board_tag }}/ - {{ board.name }}{% endblock %}
 
 {% block content %}
-<h1>Test content</h1>
+	<h1>/{{ board.board_tag }}/ - {{ board.name }}</h1>
+{% for img in images %}
+	<img src="{{ MEDIA_ROOT }}/{{ img.URI.url_200x200 }}"/>
+{% endfor %}
+
+{% endblock %}
+
+{% block sidebarLocal%}
+	<a href="addimage/">Add Image</a>
 {% endblock %}
