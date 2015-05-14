@@ -7,11 +7,11 @@ urlpatterns = [
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^test/', 'dekuuro.views.testView', name='test'),
     url(r'^login/', 'dekuuro.views.loginView', name='login'),
-    url(r'^createboard/', 'dekuuro.views.createBoardView', name='createBoard')
+    url(r'^logout/', 'dekuuro.views.logoutView', name='logout'),
+    url(r'^createboard/', 'dekuuro.views.createBoardView', name='createBoard'),
     url(r'^register/', 'dekuuro.views.registrationView', name='register'),
-    url(r'^home/', 'dekuuro.views.mainPageView', name='home'),
+    url(r'^$', 'dekuuro.views.mainPageView', name='home'),
     url(r'^board/(?P<boardTag>[a-zA-Z]+)/$', 'dekuuro.views.boardView', name='board'),
     url(r'^addimage/', 'dekuuro.views.addImageView', name='addImage'),
     url(r'^profiles/', 'dekuuro.views.profilesView', name='profiles'),
@@ -21,5 +21,5 @@ urlpatterns = [
     url(r'^boardtags/(?P<boardTag>[a-zA-Z]+)/$', 'dekuuro.views.boardTagsView', name='boardTags'),
     url(r'^search/', 'dekuuro.views.searchView', name='search'),
     url(r'^inviteusers/(?P<boardTag>[a-zA-Z]+)/$', 'dekuuro.views.inviteUsersView', name='inviteUsers'),
-    url(r'^userprofile/(?P<username>[a-zA-Z]+)/$', 'dekuuro.views.userProfileView,' name='userProfile'),
+    url(r'^userprofile/(?P<username>[a-zA-Z]+)/$', 'dekuuro.views.userProfileView', name='userProfile'),
 ]

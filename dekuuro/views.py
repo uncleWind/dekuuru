@@ -34,8 +34,10 @@ def createBoardView(Request):
 	if Request.method == 'POST':
 		formset = BoardForm(Request.POST)
 		if formset.is_valid():
-			#TODO Validate, Give admin rights, set stuff
-			return HttpResponseRedirect('')
+			newBoard = formset.save()
+			boardUsr = BoardUsers(board=newBoard, user=Request.user, priviledge_level='ADM')
+			boardUsr.save()
+			return HttpResponseRedirect('/')
 	else:
 		formset = BoardForm()
 	return render(Request, 'createBoard.html', { 'formset' : formset.as_p() })
