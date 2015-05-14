@@ -32,6 +32,7 @@ class Image(models.Model):
 	upload_date = models.DateTimeField(auto_now_add=True)
 	uploader = models.ForeignKey(User, blank=False)
 	board = models.ForeignKey(Board, blank=False)
+	boardID = models.IntegerField(blank=False)
 	tags = models.ManyToManyField(Tag)
 	
 class Comment(models.Model):
