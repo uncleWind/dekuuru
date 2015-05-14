@@ -20,26 +20,19 @@ class ImageForm(ModelForm):
 		fields = ('URI', 'tags')
 
 class UserForm(ModelForm):
+	password2 = forms.CharField(label='Confirm password')
+	
 	class Meta:
 		model = User
-		fields = ('username', 'password', 'email')
+		fields = ('username', 'password', 'password2', 'email')
 		widgets = {
-			'password' : forms.PasswordInput(),
+			'password'	: forms.PasswordInput(),
+			'password2'	: forms.PasswordInput(),
 		}
 
-class LoginForm(ModelForm):
-	class Meta:
-		model = User
-		fields = ('username', 'password')
-		widgets = {
-			'password' : forms.PasswordInput(),
-		}
-		labels = {
-			'password' : _('Password:')
-		}
-		help_texts = {
-			'username' : _('')
-		}
+class LoginForm(forms.Form):
+	username = forms.CharField(label='Username', max_length=30)
+	password = forms.CharField(label='Password', widget=forms.PasswordInput())
 
 class BoardForm(ModelForm):
 	class Meta:
