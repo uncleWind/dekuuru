@@ -13,4 +13,10 @@ Django version 1.8.1
 Using django-thumbs
 ::
 
-  $ pip install django-thumbs
+	$ pip install django-thumbs
+
+Dependencies:
+::
+	$ sudo apt-get install zlib1g-dev libjpeg-turbo8-dev libfreetype6-dev
+	$ sudo pip install pillow
+	
