@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django_thumbs.db.models import ImageWithThumbsField
 
 # Create your models here.
 class Board(models.Model):
@@ -27,8 +28,7 @@ class Tag(models.Model):
 		return u'%s:%s' (self.board.name, self.name)
 
 class Image(models.Model):
-	URI = models.FileField(max_length=400, blank=False)
-	thumb_URI = models.FileField(max_length=400)
+	URI = ImageWithThumbsField(sizes=(200,200))
 	upload_date = models.DateTimeField(auto_now_add=True)
 	uploader = models.ForeignKey(User, blank=False)
 	board = models.ForeignKey(Board, blank=False)

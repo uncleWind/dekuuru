@@ -10,3 +10,7 @@ Quick insight at what a dekuuru could be. It could be a private booru. Well, you
 - Stuff stuff stuff it's half past 11 pm leave me alone I want to sleep. This sentence shouldn't be in here, like, such sentences shouldn't be in any serious readme.
 
 Django version 1.8.1
+Using django-thumbs
+::
+
+  $ pip install django-thumbs
