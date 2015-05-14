@@ -11,6 +11,7 @@ Using django-thumbs
 
 Dependencies:
 ::
+
 	$ sudo apt-get install zlib1g-dev libjpeg-turbo8-dev libfreetype6-dev
 	$ sudo pip install pillow
 	
