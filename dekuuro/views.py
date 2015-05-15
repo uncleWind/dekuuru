@@ -70,7 +70,11 @@ def addImageView(Request, boardTag):
 	else:
 		formset = ImageForm()
 	return render(Request, 'addImage.html', { 'formset' : formset.as_p() , 'boardTag' : boardTag})
-			
+	
+def boardsView(Request):
+	boards = Board.objects.all()
+	return render(Request, 'boards.html', { 'boards' : boards })
+	
 #TODO templates
 def mainPageView(Request):
 	return render(Request, 'main.html')

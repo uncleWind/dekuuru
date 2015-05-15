@@ -14,6 +14,7 @@ urlpatterns = [
     url(r'^register/', 'dekuuro.views.registrationView', name='register'),
     url(r'^$', 'dekuuro.views.mainPageView', name='home'),
     url(r'^board/(?P<boardTag>[a-zA-Z]+)/$', 'dekuuro.views.boardView', name='board'),
+    url(r'^boards/', 'dekuuro.views.boardsView', name='boards'),
     url(r'^board/(?P<boardTag>[a-zA-Z]+)/addimage/', 'dekuuro.views.addImageView', name='addImage'),
     url(r'^profiles/', 'dekuuro.views.profilesView', name='profiles'),
     url(r'^profile/', 'dekuuro.views.profileView', name='profile'),

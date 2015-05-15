@@ -36,7 +36,7 @@
 						<a href="{% url 'home' %}">MainPage</a>
 					</li>
 					<li>
-						<a href="">Boards</a>
+						<a href="{% url 'boards' %}">Boards</a>
 					</li>
 					{% if user.is_authenticated %}
 						<li>
