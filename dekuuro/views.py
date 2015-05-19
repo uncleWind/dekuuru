@@ -59,16 +59,17 @@ def boardView(Request, boardTag):
 
 @login_required(login_url='login')
 def addImageView(Request, boardTag):
+	boardId = Board.objects.get(board_tag=boardTag)
 	if Request.method == 'POST':
-		formset = ImageForm(Request.POST, Request.FILES)
+		formset = ImageForm(Request.POST, Request.FILES, boardId=boardId)
 		if formset.is_valid():
 			newImg = formset.save(commit=False)
-			newImg.board = Board.objects.get(board_tag=boardTag)
+			newImg.board = boardId
 			newImg.uploader = Request.user
 			newImg.save()
 			return HttpResponseRedirect('/board/%s/' % (boardTag))
 	else:
-		formset = ImageForm()
+		formset = ImageForm(boardId=boardId)
 	return render(Request, 'addImage.html', { 'formset' : formset.as_p() , 'boardTag' : boardTag})
 	
 def boardsView(Request):

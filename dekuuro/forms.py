@@ -15,9 +15,18 @@ class TagForm(ModelForm):
 		fields = '__all__'
 
 class ImageForm(ModelForm):
+	
+	def __init__(self, *args, **kwargs):
+		boardId = kwargs.pop('boardId')
+		super(ImageForm, self).__init__(*args, **kwargs)
+		self.fields['tags'] = forms.ModelMultipleChoiceField(
+                required=True,
+                queryset=Tag.objects.filter(board=boardId))
+	
 	class Meta:
 		model = Image
 		fields = ('URI', 'tags')
+	
 
 class UserForm(ModelForm):
 	password2 = forms.CharField(label='Confirm password')
