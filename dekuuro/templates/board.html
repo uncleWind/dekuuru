@@ -5,7 +5,9 @@
 {% block content %}
 	<h1>/{{ board.board_tag }}/ - {{ board.name }}</h1>
 {% for img in images %}
-	<img src="{{ MEDIA_ROOT }}/{{ img.URI.url_200x200 }}"/>
+	<a href="/board/{{ board.board_tag }}/{{ img.boardID }}">
+		<img src="{{ MEDIA_ROOT }}/{{ img.URI.url_200x200 }}"/>
+	</a>
 {% endfor %}
 
 {% endblock %}

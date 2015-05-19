@@ -59,7 +59,6 @@ def boardView(Request, boardTag):
 
 @login_required(login_url='login')
 def addImageView(Request, boardTag):
-	boardId = Board.objects.get(board_tag=boardTag)
 	if Request.method == 'POST':
 		formset = ImageForm(Request.POST, Request.FILES, boardId=boardId)
 		if formset.is_valid():
@@ -76,6 +75,22 @@ def boardsView(Request):
 	boards = Board.objects.all()
 	return render(Request, 'boards.html', { 'boards' : boards })
 	
+def imageDetailsView(Request, boardTag, boardImageID):
+	board = Board.objects.get(board_tag=boardTag)
+	image = Image.objects.get(board=board, boardID=boardImageID)
+	if Request.method == 'POST' and Request.user.is_authenticated():
+		formset = CommentForm(Request.POST)
+		if formset.is_valid():
+			comment = formset.save(commit=False)
+			comment.poster = Request.user
+			comment.image = image
+			comment.save()
+			formset = CommentForm()
+	else:
+		formset = CommentForm()
+	comments = Comment.objects.filter(image=image)
+	return render(Request, 'imageDetails.html', { 'formset' : formset.as_p() , 'image' : image , 'board' : board , 'comments' : comments})
+	
 #TODO templates
 def mainPageView(Request):
 	return render(Request, 'main.html')
@@ -85,9 +100,6 @@ def profilesView(Request):
 	
 def profileView(Request):
 	return render(Request, 'profile.html')
-	
-def imageDetailsView(Request):
-	return render(Request, 'imageDetails.html')
 	
 def subscriptionsView(Request):
 	return render(Request, 'subscriptions.html')
