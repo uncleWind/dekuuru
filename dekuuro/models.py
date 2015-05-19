@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Max
 from django.contrib.auth.models import User
 from django_thumbs.db.models import ImageWithThumbsField
 import os
@@ -49,7 +50,7 @@ class Image(models.Model):
 		if self.__class__.objects.filter(board=self.board).count() == 0:
 			BID = 0
 		else:
-			BID = self.__class__.objects.filter(board=self.board).aggreagate.max('boardID') + 1
+			BID = self.__class__.objects.filter(board=self.board).aggregate(currID=Max('boardID'))['currID'] + 1
 		self.boardID = BID
 		super(self.__class__, self).save(*args, **kwargs)
 		
