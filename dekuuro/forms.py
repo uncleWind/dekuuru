@@ -12,7 +12,7 @@ class CommentForm(ModelForm):
 class TagForm(ModelForm):
 	class Meta:
 		model = Tag
-		fields = '__all__'
+		fields = ('name',)
 
 class ImageForm(ModelForm):
 	

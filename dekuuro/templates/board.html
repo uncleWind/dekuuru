@@ -13,5 +13,14 @@
 {% endblock %}
 
 {% block sidebarLocal%}
-	<a href="addimage/">Add Image</a>
+	<div>
+		<a href="addimage/">Add Image</a>
+		<a href="/boardtags/{{ board.board_tag }}/">Add tag</a> 
+	</div>
+	<div>
+		Tags:
+		{% for tag in tags %}
+			{{ tag.name }}
+		{% endfor %}
+	</div>
 {% endblock %}

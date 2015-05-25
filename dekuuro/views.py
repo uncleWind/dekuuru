@@ -55,10 +55,12 @@ def registrationView(Request):
 def boardView(Request, boardTag):
 	currBoard = Board.objects.get(board_tag=boardTag)
 	images = Image.objects.filter(board=currBoard)
-	return render(Request, 'board.html', {	'images' : images , 'board' : currBoard})
+	tags = Tag.objects.filter(board=currBoard)
+	return render(Request, 'board.html', {'images' : images , 'board' : currBoard, 'tags' : tags})
 
 @login_required(login_url='login')
 def addImageView(Request, boardTag):
+	boardId = Board.objects.get(board_tag=boardTag)
 	if Request.method == 'POST':
 		formset = ImageForm(Request.POST, Request.FILES, boardId=boardId)
 		if formset.is_valid():
@@ -90,7 +92,21 @@ def imageDetailsView(Request, boardTag, boardImageID):
 		formset = CommentForm()
 	comments = Comment.objects.filter(image=image)
 	return render(Request, 'imageDetails.html', { 'formset' : formset.as_p() , 'image' : image , 'board' : board , 'comments' : comments})
-	
+
+def boardTagsView(Request, boardTag):
+	board = Board.objects.get(board_tag=boardTag)
+	if Request.method == 'POST' and Request.user.is_authenticated():
+		formset = TagForm(Request.POST)
+		if formset.is_valid():
+			tag = formset.save(commit=False)
+			tag.board = board
+			tag.save()
+			return HttpResponseRedirect('/board/%s/' % (boardTag))
+	else:
+		formset = TagForm()
+	activeTags = Tag.objects.filter(board=board)
+	return render(Request, 'boardTags.html', { 'formset':formset.as_p(), 'board':board, 'tags':activeTags })
+
 #TODO templates
 def mainPageView(Request):
 	return render(Request, 'main.html')
@@ -103,9 +119,6 @@ def profileView(Request):
 	
 def subscriptionsView(Request):
 	return render(Request, 'subscriptions.html')
-	
-def boardTagsView(Request):
-	return render(Request, 'boardTags.html')
 	
 def searchView(Request):
 	return render(Request, 'search.html')
