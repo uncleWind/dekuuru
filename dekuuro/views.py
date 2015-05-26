@@ -4,6 +4,7 @@ from dekuuro.models import *
 from django.http import HttpResponseRedirect
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Create your views here.
 
@@ -54,7 +55,7 @@ def registrationView(Request):
 	
 def boardView(Request, boardTag):
 	currBoard = Board.objects.get(board_tag=boardTag)
-	images = Image.objects.filter(board=currBoard)
+	images = Image.objects.filter(board=currBoard).order_by('-upload_date')
 	tags = Tag.objects.filter(board=currBoard)
 	return render(Request, 'board.html', {'images' : images , 'board' : currBoard, 'tags' : tags})
 
@@ -107,10 +108,19 @@ def boardTagsView(Request, boardTag):
 	activeTags = Tag.objects.filter(board=board)
 	return render(Request, 'boardTags.html', { 'formset':formset.as_p(), 'board':board, 'tags':activeTags })
 
-#TODO templates
 def mainPageView(Request):
-	return render(Request, 'main.html')
+	image_list = Image.objects.all().order_by('-upload_date')
+	paginator = Paginator(image_list, 20)
+	page = Request.GET.get('page')
+	try:
+		images = paginator.page(page)
+	except PageNotAnInteger:
+		images = paginator.page(1)
+	except EmptyPage:
+		images = paginator.page(paginator.num_pages)
+	return render(Request, 'main.html', { 'images' : images })
 
+#TODO templates
 def profilesView(Request):
 	return render(Request, 'profiles.html')
 	
