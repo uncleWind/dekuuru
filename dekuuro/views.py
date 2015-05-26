@@ -82,18 +82,29 @@ def imageDetailsView(Request, boardTag, boardImageID):
 	board = Board.objects.get(board_tag=boardTag)
 	image = Image.objects.get(board=board, boardID=boardImageID)
 	if Request.method == 'POST' and Request.user.is_authenticated():
-		formset = CommentForm(Request.POST)
-		if formset.is_valid():
-			comment = formset.save(commit=False)
-			comment.poster = Request.user
-			comment.image = image
-			comment.save()
-			formset = CommentForm()
+		if 'comment_form' in Request.POST:
+			formset_comments = CommentForm(Request.POST)
+			if formset_comments.is_valid():
+				comment = formset_comments.save(commit=False)
+				comment.poster = Request.user
+				comment.image = image
+				comment.save()
+				formset_comments = CommentForm()
+			formset_tags = MissingTagsForm(image=image)
+		elif 'tags_form' in Request.POST:
+			formset_tags = MissingTagsForm(Request.POST, image=image)
+			if formset_tags.is_valid():
+				for new_tag in formset_tags.cleaned_data['tags']:
+					image.tags.add(new_tag)
+				formset_tags = MissingTagsForm(image=image)
+			formset_comments = CommentForm()
 	else:
-		formset = CommentForm()
+		formset_comments = CommentForm()
+		formset_tags = MissingTagsForm(image=image)
 	comments = Comment.objects.filter(image=image)
 	tags = image.tags.all()
-	return render(Request, 'imageDetails.html', { 'formset':formset.as_p(), 'image':image, 'board':board, 'comments':comments, 'tags':tags})
+	missing_tags_count = Tag.objects.filter(board=image.board).exclude(name__in = image.tags.values_list('name', flat=True)).count()
+	return render(Request, 'imageDetails.html', { 'formset_comments':formset_comments.as_p(), 'formset_tags':formset_tags.as_p(), 'image':image, 'board':board, 'comments':comments, 'tags':tags, 'missing_tags':missing_tags_count})
 
 def boardTagsView(Request, boardTag):
 	board = Board.objects.get(board_tag=boardTag)
@@ -131,6 +142,14 @@ def removeTagView(Request, boardTag, tagName):
 	tag = Tag.objects.get(board=board, name=tagName)
 	tag.delete()
 	return HttpResponseRedirect('/board/%s/' % (boardTag))
+
+def removeImageTagView(Request, boardTag, imageID, imageTag):
+	board = Board.objects.get(board_tag=boardTag)
+	image = Image.objects.get(board=board, boardID=imageID)
+	removed_tag = image.tags.get(name=imageTag)
+	if removed_tag:
+		image.tags.remove(removed_tag)
+	return HttpResponseRedirect('/board/%s/%s/' % (boardTag, imageID))
 
 #TODO templates
 def mainPageView(Request):

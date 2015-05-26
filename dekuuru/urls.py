@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^boardtags/(?P<boardTag>[a-zA-Z]+)/$', 'dekuuro.views.boardTagsView', name='boardTags'),
     url(r'^boardtags/(?P<boardTag>[a-zA-Z]+)/edit/(?P<tagName>[a-zA-Z]+)/$', 'dekuuro.views.editTagView', name='editTag'),
     url(r'^boardtags/(?P<boardTag>[a-zA-Z]+)/remove/(?P<tagName>[a-zA-Z]+)/$', 'dekuuro.views.removeTagView', name='removeTag'),
+    url(r'^imagetags/(?P<boardTag>[a-zA-Z]+)/(?P<imageID>[0-9]+)/remove/(?P<imageTag>[a-zA-Z]+)/$', 'dekuuro.views.removeImageTagView', name='removeImageTag'),
     url(r'^search/', 'dekuuro.views.searchView', name='search'),
     url(r'^inviteusers/(?P<boardTag>[a-zA-Z]+)/$', 'dekuuro.views.inviteUsersView', name='inviteUsers'),
     url(r'^userprofile/(?P<username>[a-zA-Z]+)/$', 'dekuuro.views.userProfileView', name='userProfile'),

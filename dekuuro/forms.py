@@ -14,8 +14,18 @@ class TagForm(ModelForm):
 		model = Tag
 		fields = ('name',)
 
-class ImageForm(ModelForm):
+class MissingTagsForm(ModelForm):
+	def __init__(self, *args, **kwargs):
+		image = kwargs.pop('image')
 
+		super(MissingTagsForm, self).__init__(*args, **kwargs)
+		self.fields['tags'] = forms.ModelMultipleChoiceField(required=True, queryset=Tag.objects.filter(board=image.board).exclude(name__in = image.tags.values_list('name', flat=True)))
+
+	class Meta:
+		model = Image
+		fields = ('tags',)
+
+class ImageForm(ModelForm):
 	def __init__(self, *args, **kwargs):
 		boardId = kwargs.pop('boardId')
 		super(ImageForm, self).__init__(*args, **kwargs)
