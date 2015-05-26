@@ -17,6 +17,12 @@
 		{% endfor %}
 	</ul>
 </div>
+
+Tags:
+{% for tag in tags %}
+	{{ tag.name }}
+{% endfor %}
+
 {% if user.is_authenticated %}
 	<form method='post' action="/board/{{ board.board_tag }}/{{ image.boardID}}/">
 		{% csrf_token %}

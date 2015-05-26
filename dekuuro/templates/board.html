@@ -15,12 +15,15 @@
 {% block sidebarLocal%}
 	<div>
 		<a href="addimage/">Add Image</a>
-		<a href="/boardtags/{{ board.board_tag }}/">Add tag</a> 
+		<a href="/boardtags/{{ board.board_tag }}/">Add tag</a>
 	</div>
 	<div>
 		Tags:
 		{% for tag in tags %}
-			{{ tag.name }}
+			<br/>
+			<strong>{{ tag.name }}</strong>
+			<a href="/boardtags/{{ board.board_tag }}/edit/{{ tag.name }}">Edit tag</a>
+			<a href="/boardtags/{{ board.board_tag }}/remove/{{ tag.name }}">Remove tag</a>
 		{% endfor %}
 	</div>
 {% endblock %}
