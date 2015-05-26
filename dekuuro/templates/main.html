@@ -3,5 +3,21 @@
 {% block title %}Dekuuro - nothing more, nothing less{% endblock %}
 
 {% block content %}
-<h1>Test content</h1>
+	{% for img in images %}
+		<a href="/board/{{ img.board.board_tag }}/{{ img.boardID }}">
+			<img src="{{ MEDIA_ROOT }}/{{ img.URI.url_200x200 }}"/>
+		</a>
+	{% endfor %}
+	
+	<div>
+		{% if images.has_previous %}
+			<a href="?page={{images.previous_page_number}}">Prev</a>
+		{% endif %}
+		<p>
+			Page {{ images.number }} of {{ images.paginator.num_pages }}
+		</p>
+		{% if images.has_next %}
+			<a href="?page={{images.next_page_number}}">Next</a>
+		{% endif %}
+	</div>
 {% endblock %}
