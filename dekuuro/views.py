@@ -3,6 +3,7 @@ from dekuuro.forms import *
 from dekuuro.models import *
 from django.http import HttpResponseRedirect
 from django.contrib.auth import logout, authenticate, login
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -44,11 +45,16 @@ def createBoardView(Request):
 	return render(Request, 'createBoard.html', { 'formset' : formset.as_p() })
 
 def registrationView(Request):
+	logout(Request)
 	if Request.method == 'POST':
 		formset = UserForm(Request.POST)
 		if formset.is_valid():
-			#TODO Validate, Give admin rights, set stuff
-			return HttpResponseRedirect('')
+			newUsr = User.objects.create_user(formset.cleaned_data['username'], formset.cleaned_data['email'], formset.cleaned_data['password'])
+			user = authenticate(username=formset.cleaned_data['username'], password=formset.cleaned_data['password'])
+			if user is not None:
+				if user.is_active:
+					login(Request, user)
+			return HttpResponseRedirect('/')
 	else:
 		formset = UserForm()
 	return render(Request, 'register.html', { 'formset' : formset.as_p() })

@@ -3,6 +3,7 @@ from django.forms import ModelForm
 from dekuuro.models import *
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import ValidationError
 
 class CommentForm(ModelForm):
 	class Meta:
@@ -39,15 +40,28 @@ class ImageForm(ModelForm):
 
 
 class UserForm(ModelForm):
-	password2 = forms.CharField(label='Confirm password')
+	password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput())
 
 	class Meta:
 		model = User
 		fields = ('username', 'password', 'password2', 'email')
 		widgets = {
 			'password'	: forms.PasswordInput(),
-			'password2'	: forms.PasswordInput(),
 		}
+	
+	def clean_email(self):
+		mail = self.cleaned_data['email']
+		if User.objects.filter(email=mail).exists():
+			raise ValidationError('Email already exists')
+		return mail
+	
+	def clean(self):
+		data = self.cleaned_data
+		if data['password'] != data['password2']:
+			self._errors['password'] = ['Passwords do not match']
+			del data['password']
+			del data['password2']
+		return data
 
 class LoginForm(forms.Form):
 	username = forms.CharField(label='Username', max_length=30)
