@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Your profile{% endblock %}
+{% block title %}{{ username }}{% endblock %}
 
 {% block content %}
-<h1>Test content</h1>
+	<h1>{{ username }}</h1>
+	<div>
+		<a href="comments/">Comments by {{ username }}: {{ comment_count }}</a>
+		<a href="uploads/">Images by {{ username }}: {{ img_count }}</a>
+	</div>
 {% endblock %}

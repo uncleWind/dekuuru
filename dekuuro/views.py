@@ -162,6 +162,22 @@ def profilesView(Request):
 	users = User.objects.all().values('username')
 	return render(Request, 'profiles.html', { 'users' : users })
 
+def userProfileView(Request, username):
+	user = User.objects.get(username=username)
+	img_count = Image.objects.filter(uploader=user).count()
+	comment_count = Comment.objects.filter(poster=user).count()
+	return render(Request, 'userProfile.html', { 'img_count' : img_count, 'comment_count' : comment_count , 'username' : username })
+
+def userUploadsView(Request, username):
+	user = User.objects.get(username=username)
+	images = Image.objects.filter(uploader=user)
+	return render(Request, 'userUploads.html', { 'username' : username, 'images' : images })
+
+def userCommentsView(Request, username):
+	user = User.objects.get(username=username)
+	comments = Comment.objects.filter(poster=user)
+	return render(Request, 'userComments.html', { 'username' : username, 'comments' : comments })
+
 #TODO templates
 def mainPageView(Request):
 	image_list = Image.objects.all().order_by('-upload_date')
@@ -186,6 +202,3 @@ def searchView(Request):
 
 def inviteUsersView(Request):
 	return render(Request, 'inviteUsers.html')
-
-def userProfileView(Request):
-	return render(Request, 'userProfile.html')

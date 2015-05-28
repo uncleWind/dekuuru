@@ -8,7 +8,7 @@
 	<ol>
 		{% for user in users %}
 			<li>
-				<a href="">{{ user.username }}</a>
+				<a href="/userprofile/{{ user.username }}/">{{ user.username }}</a>
 			</li>
 		{% endfor %}
 	</ol>

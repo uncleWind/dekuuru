@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}{{ username }} - Uploads{% endblock %}
+
+{% block content %}
+	<h2>Uploads by - {{ username }}</h2>
+	{% for img in images %}
+		<a href="/board/{{ image.board.board_tag }}/{{ image.boardID }}/">
+			<img src="{{ MEDIA_ROOT }}/{{ img.URI.url_200x200 }}"/>
+		</a>
+	{% endfor %}
+{% endblock %}

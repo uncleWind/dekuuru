@@ -26,7 +26,9 @@ urlpatterns = [
     url(r'^imagetags/(?P<boardTag>[a-zA-Z]+)/(?P<imageID>[0-9]+)/remove/(?P<imageTag>[a-zA-Z]+)/$', 'dekuuro.views.removeImageTagView', name='removeImageTag'),
     url(r'^search/', 'dekuuro.views.searchView', name='search'),
     url(r'^inviteusers/(?P<boardTag>[a-zA-Z]+)/$', 'dekuuro.views.inviteUsersView', name='inviteUsers'),
-    url(r'^userprofile/(?P<username>[a-zA-Z]+)/$', 'dekuuro.views.userProfileView', name='userProfile'),
+    url(r'^userprofile/(?P<username>[a-zA-Z0-9]+)/$', 'dekuuro.views.userProfileView', name='userProfile'),
+    url(r'^userprofile/(?P<username>[a-zA-Z0-9]+)/uploads/$', 'dekuuro.views.userUploadsView', name='userUploads'),
+    url(r'^userprofile/(?P<username>[a-zA-Z0-9]+)/comments/$', 'dekuuro.views.userCommentsView', name='userComments'),
 ]
 
 if settings.DEBUG:
