@@ -38,6 +38,9 @@
 					<li>
 						<a href="{% url 'boards' %}">Boards</a>
 					</li>
+					<li>
+						<a href="{% url 'profiles' %}">Users</a>
+					</li>
 					{% if user.is_authenticated %}
 						<li>
 							<a href="{% url 'createBoard' %}">Create board</a>

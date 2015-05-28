@@ -3,5 +3,13 @@
 {% block title %}Profiles{% endblock %}
 
 {% block content %}
-<h1>Test content</h1>
+	<h2>Users</h2>
+
+	<ol>
+		{% for user in users %}
+			<li>
+				<a href="">{{ user.username }}</a>
+			</li>
+		{% endfor %}
+	</ol>
 {% endblock %}

@@ -158,6 +158,10 @@ def removeImageTagView(Request, boardTag, imageID, imageTag):
 		image.tags.remove(removed_tag)
 	return HttpResponseRedirect('/board/%s/%s/' % (boardTag, imageID))
 
+def profilesView(Request):
+	users = User.objects.all().values('username')
+	return render(Request, 'profiles.html', { 'users' : users })
+
 #TODO templates
 def mainPageView(Request):
 	image_list = Image.objects.all().order_by('-upload_date')
@@ -170,9 +174,6 @@ def mainPageView(Request):
 	except EmptyPage:
 		images = paginator.page(paginator.num_pages)
 	return render(Request, 'main.html', { 'images' : images })
-
-def profilesView(Request):
-	return render(Request, 'profiles.html')
 
 def profileView(Request):
 	return render(Request, 'profile.html')
