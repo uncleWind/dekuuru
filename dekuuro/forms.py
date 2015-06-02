@@ -71,3 +71,6 @@ class BoardForm(ModelForm):
 	class Meta:
 		model = Board
 		fields = '__all__'
+
+class SearchForm(forms.Form):
+	searchString = forms.CharField(label='Search', max_length=1000)

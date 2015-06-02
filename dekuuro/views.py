@@ -25,7 +25,7 @@ def loginView(Request):
 			loginError = 'Login data incorrect.'
 	else:
 		formset = LoginForm()
-	return render(Request, 'login.html', { 'formset' : formset.as_p(), 'loginError' : loginError})
+	return render(Request, 'login.html', { 'formset' : formset.as_p(), 'loginError' : loginError, 'search_form' : SearchForm()})
 
 def logoutView(Request):
 	logout(Request)
@@ -42,7 +42,7 @@ def createBoardView(Request):
 			return HttpResponseRedirect('/board/%s/' % (newBoard.board_tag))
 	else:
 		formset = BoardForm()
-	return render(Request, 'createBoard.html', { 'formset' : formset.as_p() })
+	return render(Request, 'createBoard.html', { 'formset' : formset.as_p(), 'search_form' : SearchForm() })
 
 def registrationView(Request):
 	logout(Request)
@@ -57,13 +57,13 @@ def registrationView(Request):
 			return HttpResponseRedirect('/')
 	else:
 		formset = UserForm()
-	return render(Request, 'register.html', { 'formset' : formset.as_p() })
+	return render(Request, 'register.html', { 'formset' : formset.as_p(), 'search_form' : SearchForm() })
 
 def boardView(Request, boardTag):
 	currBoard = Board.objects.get(board_tag=boardTag)
 	images = Image.objects.filter(board=currBoard).order_by('-upload_date')
 	tags = Tag.objects.filter(board=currBoard)
-	return render(Request, 'board.html', {'images' : images , 'board' : currBoard, 'tags' : tags})
+	return render(Request, 'board.html', {'images' : images , 'board' : currBoard, 'tags' : tags, 'search_form' : SearchForm()})
 
 @login_required(login_url='login')
 def addImageView(Request, boardTag):
@@ -79,11 +79,11 @@ def addImageView(Request, boardTag):
 			return HttpResponseRedirect('/board/%s/' % (boardTag))
 	else:
 		formset = ImageForm(boardId=boardId)
-	return render(Request, 'addImage.html', { 'formset' : formset.as_p() , 'boardTag' : boardTag})
+	return render(Request, 'addImage.html', { 'formset' : formset.as_p() , 'boardTag' : boardTag, 'search_form' : SearchForm()})
 
 def boardsView(Request):
 	boards = Board.objects.all()
-	return render(Request, 'boards.html', { 'boards' : boards })
+	return render(Request, 'boards.html', { 'boards' : boards , 'search_form' : SearchForm()})
 
 def imageDetailsView(Request, boardTag, boardImageID):
 	board = Board.objects.get(board_tag=boardTag)
@@ -111,7 +111,7 @@ def imageDetailsView(Request, boardTag, boardImageID):
 	comments = Comment.objects.filter(image=image)
 	tags = image.tags.all()
 	missing_tags_count = Tag.objects.filter(board=image.board).exclude(name__in = image.tags.values_list('name', flat=True)).count()
-	return render(Request, 'imageDetails.html', { 'formset_comments':formset_comments.as_p(), 'formset_tags':formset_tags.as_p(), 'image':image, 'board':board, 'comments':comments, 'tags':tags, 'missing_tags':missing_tags_count})
+	return render(Request, 'imageDetails.html', { 'formset_comments':formset_comments.as_p(), 'formset_tags':formset_tags.as_p(), 'image':image, 'board':board, 'comments':comments, 'tags':tags, 'missing_tags':missing_tags_count, 'search_form' : SearchForm()})
 
 def boardTagsView(Request, boardTag):
 	board = Board.objects.get(board_tag=boardTag)
@@ -125,7 +125,7 @@ def boardTagsView(Request, boardTag):
 	else:
 		formset = TagForm()
 	activeTags = Tag.objects.filter(board=board)
-	return render(Request, 'boardTags.html', { 'formset':formset.as_p(), 'board':board, 'tags':activeTags })
+	return render(Request, 'boardTags.html', { 'formset':formset.as_p(), 'board':board, 'tags':activeTags , 'search_form' : SearchForm()})
 
 def editTagView(Request, boardTag, tagName):
 	board = Board.objects.get(board_tag=boardTag)
@@ -142,7 +142,7 @@ def editTagView(Request, boardTag, tagName):
 				formset = TagForm(initial={'name':tagName})
 	else:
 		formset = TagForm(initial={'name':tagName})
-	return render(Request, 'editTag.html', { 'formset':formset.as_p(), 'board':board, 'tag':tagName })
+	return render(Request, 'editTag.html', { 'formset':formset.as_p(), 'board':board, 'tag':tagName , 'search_form' : SearchForm()})
 
 def removeTagView(Request, boardTag, tagName):
 	board = Board.objects.get(board_tag=boardTag)
@@ -160,25 +160,24 @@ def removeImageTagView(Request, boardTag, imageID, imageTag):
 
 def profilesView(Request):
 	users = User.objects.all().values('username')
-	return render(Request, 'profiles.html', { 'users' : users })
+	return render(Request, 'profiles.html', { 'users' : users , 'search_form' : SearchForm()})
 
 def userProfileView(Request, username):
 	user = User.objects.get(username=username)
 	img_count = Image.objects.filter(uploader=user).count()
 	comment_count = Comment.objects.filter(poster=user).count()
-	return render(Request, 'userProfile.html', { 'img_count' : img_count, 'comment_count' : comment_count , 'username' : username })
+	return render(Request, 'userProfile.html', { 'img_count' : img_count, 'comment_count' : comment_count , 'username' : username, 'search_form' : SearchForm() })
 
 def userUploadsView(Request, username):
 	user = User.objects.get(username=username)
 	images = Image.objects.filter(uploader=user)
-	return render(Request, 'userUploads.html', { 'username' : username, 'images' : images })
+	return render(Request, 'userUploads.html', { 'username' : username, 'images' : images , 'search_form' : SearchForm()})
 
 def userCommentsView(Request, username):
 	user = User.objects.get(username=username)
 	comments = Comment.objects.filter(poster=user)
-	return render(Request, 'userComments.html', { 'username' : username, 'comments' : comments })
+	return render(Request, 'userComments.html', { 'username' : username, 'comments' : comments , 'search_form' : SearchForm()})
 
-#TODO templates
 def mainPageView(Request):
 	image_list = Image.objects.all().order_by('-upload_date')
 	paginator = Paginator(image_list, 20)
@@ -189,8 +188,9 @@ def mainPageView(Request):
 		images = paginator.page(1)
 	except EmptyPage:
 		images = paginator.page(paginator.num_pages)
-	return render(Request, 'main.html', { 'images' : images })
+	return render(Request, 'main.html', { 'images' : images , 'search_form' : SearchForm()})
 
+#TODO templates
 def profileView(Request):
 	return render(Request, 'profile.html')
 
@@ -198,7 +198,13 @@ def subscriptionsView(Request):
 	return render(Request, 'subscriptions.html')
 
 def searchView(Request):
-	return render(Request, 'search.html')
+	if Request.method == 'POST':
+		formset = SearchForm(Request.POST)
+		if formset.is_valid():
+			searchString = formset.cleaned_data['searchString']
+	else:
+		formset = SearchForm();
+	return render(Request, 'search.html', { 'search' : searchString , 'search_form' : formset})
 
 def inviteUsersView(Request):
 	return render(Request, 'inviteUsers.html')

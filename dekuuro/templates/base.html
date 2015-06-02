@@ -30,7 +30,11 @@
 			</div>
 			<!-- Site navigation. -->
 			<div id="globalContent">
-				<!-- Search bar goes somewhere here. TODO -->
+				<form method="post" action="{% url 'search' %}">
+					{% csrf_token %}
+					{{ search_form.as_p }}
+					<input type="submit" name="search" value="Search"/>
+				</form>
 				<ul>
 					<li>
 						<a href="{% url 'home' %}">MainPage</a>
