@@ -190,22 +190,43 @@ def mainPageView(Request):
 		images = paginator.page(paginator.num_pages)
 	return render(Request, 'main.html', { 'images' : images , 'search_form' : SearchForm()})
 
+def searchView(Request):
+	if Request.method == 'POST':
+		formset = SearchForm(Request.POST)
+		if formset.is_valid():
+			searchString = formset.cleaned_data['searchString']
+			searchList = filter(None ,set(searchString.split(' ')))
+			includeList = []
+			excludeList = []
+			tagList = []
+			# temp. +- analysis
+			for tagString in searchList:
+				if '-' in tagString:
+					excludeList.append(tagString)
+				else:
+					includeList.append(tagString)
+			# temp. tag interpret.
+				if ':' in tagString:
+					tagPair = tagString.split(':')
+					tagPair[0] = 'board: ' + tagPair[0]
+					tagPair[1] = 'tag: ' + tagPair[1]
+				elif '/' in tagString:
+					tagPair = []
+					tagPair.append('board: ' + tagString)
+				else:
+					tagPair = []
+					tagPair.append('tag: ' + tagString)
+				tagList.append(tagPair)
+	else:
+		formset = SearchForm();
+	return render(Request, 'search.html', { 'inc' : includeList , 'exc' : excludeList , 'tag' : tagList , 'search_form' : formset})
+
 #TODO templates
 def profileView(Request):
 	return render(Request, 'profile.html')
 
 def subscriptionsView(Request):
 	return render(Request, 'subscriptions.html')
-
-def searchView(Request):
-	if Request.method == 'POST':
-		formset = SearchForm(Request.POST)
-		if formset.is_valid():
-			searchString = formset.cleaned_data['searchString']
-			searchList = set(searchString.split(' '))
-	else:
-		formset = SearchForm();
-	return render(Request, 'search.html', { 'search' : searchList , 'search_form' : formset})
-
+	
 def inviteUsersView(Request):
 	return render(Request, 'inviteUsers.html')
