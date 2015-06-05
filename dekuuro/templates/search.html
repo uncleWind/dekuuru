@@ -3,5 +3,7 @@
 {% block title %}Search{% endblock %}
 
 {% block content %}
-<h1>{{ search }}</h1>
+	{% for string in search %}
+		<h2>{{ string }}</h2>
+	{% endfor %}
 {% endblock %}

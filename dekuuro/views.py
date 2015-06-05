@@ -202,9 +202,10 @@ def searchView(Request):
 		formset = SearchForm(Request.POST)
 		if formset.is_valid():
 			searchString = formset.cleaned_data['searchString']
+			searchList = set(searchString.split(' '))
 	else:
 		formset = SearchForm();
-	return render(Request, 'search.html', { 'search' : searchString , 'search_form' : formset})
+	return render(Request, 'search.html', { 'search' : searchList , 'search_form' : formset})
 
 def inviteUsersView(Request):
 	return render(Request, 'inviteUsers.html')
