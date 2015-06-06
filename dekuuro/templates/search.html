@@ -3,19 +3,10 @@
 {% block title %}Search{% endblock %}
 
 {% block content %}
-	<h1>Include</h1>
-	{% for string in inc %}
-		<h2>{{ string }}</h2>
-	{% endfor %}
-	<h1>Exclude</h1>
-	{% for string in exc %}
-		<h2>{{ string }}</h2>
-	{% endfor %}
-	<h1>Tags</h1>
-	{% for pair in tag %}
-	<h2>Tag:</h2>
-		{% for string in pair %}
-			<p>{{ string }}</p>
-		{% endfor %}
+	<h1>Search</h1>
+	{% for img in images %}
+		<a href="/board/{{ img.board.board_tag }}/{{ img.boardID }}">
+			<img src="{{ MEDIA_ROOT }}/{{ img.URI.url_200x200 }}"/>
+		</a>
 	{% endfor %}
 {% endblock %}

@@ -6,6 +6,7 @@ from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
 
 # Create your views here.
 
@@ -191,35 +192,81 @@ def mainPageView(Request):
 	return render(Request, 'main.html', { 'images' : images , 'search_form' : SearchForm()})
 
 def searchView(Request):
+	search_images = []
 	if Request.method == 'POST':
 		formset = SearchForm(Request.POST)
 		if formset.is_valid():
 			searchString = formset.cleaned_data['searchString']
-			searchList = filter(None ,set(searchString.split(' ')))
-			includeList = []
-			excludeList = []
-			tagList = []
-			# temp. +- analysis
-			for tagString in searchList:
-				if '-' in tagString:
-					excludeList.append(tagString)
-				else:
-					includeList.append(tagString)
-			# temp. tag interpret.
-				if ':' in tagString:
-					tagPair = tagString.split(':')
-					tagPair[0] = 'board: ' + tagPair[0]
-					tagPair[1] = 'tag: ' + tagPair[1]
-				elif '/' in tagString:
-					tagPair = []
-					tagPair.append('board: ' + tagString)
-				else:
-					tagPair = []
-					tagPair.append('tag: ' + tagString)
-				tagList.append(tagPair)
+			search_subsets = filter(None ,set(searchString.split(',')))
+
+			for search_subset in search_subsets:
+				search_subset = search_subset.strip(' ')
+				subset_list = filter(None ,set(search_subset.split(' ')))
+				includeList = []
+				excludeList = []
+				# temp. +- analysis
+				for tagString in subset_list:
+					is_exclusive = False
+					if '-' in tagString:
+						is_exclusive = True
+						tagString = tagString.strip('-')
+					if len(tagString) > 0:
+					# temp. tag interpret.
+						if ':' in tagString:
+							tagPair = tagString.split(':')
+							tagPair[0] = tagPair[0].strip('/')
+						elif '/' in tagString:
+							tagPair = []
+							tagPair.append(tagString.strip('/'))
+						else:
+							tagPair = []
+							tagPair.append(':' + tagString)
+						if not is_exclusive:
+							includeList.append(tagPair)
+						else:
+							excludeList.append(tagPair)
+
+				#Q's - code will -almost- repeat, oh well
+				inclusive_q = Q()
+				exclusive_q = Q()
+
+				#inclusive Q
+				for tagPair in includeList:
+					if(len(tagPair) == 2):
+						tag_name = tagPair[1]
+						board_tag_name = tagPair[0]
+						inclusive_q.add(Q(tags__name=tag_name, board__board_tag=board_tag_name), Q.AND)
+					elif tagPair[0].startswith(':'):
+						tag_name = tagPair[0].strip(':');
+						inclusive_q.add(Q(tags__name=tag_name), Q.AND)
+					else:
+						board_tag_name = tagPair[0]
+						inclusive_q.add(Q(board__board_tag=board_tag_name) , Q.AND)
+
+				#exclusive Q
+				for tagPair in excludeList:
+					if(len(tagPair) == 2):
+						tag_name = tagPair[0]
+						board_tag_name = tagPair[1]
+						exclusive_q = exclusive_q | Q(tags__name=tag_name, board__board_tag=board_tag_name)
+					elif tagPair[0].startswith(':'):
+						tag_name = tagPair[0].strip(':');
+						exclusive_q = exclusive_q | Q(tags__name=tag_name)
+					else:
+						board_tag_name = tagPair[0]
+						exclusive_q = exclusive_q | Q(board__board_tag=board_tag_name)
+
+				#Made it filter -> exclude -> distinct just to be sure
+				queried_images = Image.objects.filter(inclusive_q).exclude(exclusive_q)
+				queried_images = queried_images.distinct()
+
+				#Clusterfuck emerges
+				search_images.extend(queried_images)
+				search_images = list(set(search_images))
+
 	else:
 		formset = SearchForm();
-	return render(Request, 'search.html', { 'inc' : includeList , 'exc' : excludeList , 'tag' : tagList , 'search_form' : formset})
+	return render(Request, 'search.html', { 'images':search_images, 'search_form':formset })
 
 #TODO templates
 def profileView(Request):
@@ -227,6 +274,6 @@ def profileView(Request):
 
 def subscriptionsView(Request):
 	return render(Request, 'subscriptions.html')
-	
+
 def inviteUsersView(Request):
 	return render(Request, 'inviteUsers.html')
