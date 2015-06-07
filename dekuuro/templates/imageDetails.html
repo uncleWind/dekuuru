@@ -7,13 +7,13 @@
 
 	<img src="{{ MEDIA_ROOT }}/{{ image.URI.url }}"/>
 	<h5>Uploaded by {{ image.uploader }} on {{ image.upload_date }}</h5>
+	<h5><small>Tags: {% for tag in tags %} {{ tag.name }} {% endfor %}</small></h5>
 	<div>
-		<ul>
+		<ul class="list-unstyled">
 			{% for comment in comments %}
 				<li>
 					<div>
-						<h3>{{ comment.poster }}</h3>
-						<h4>{{ comment.post_date }}</h4>
+						<h3>{{ comment.poster }}   <small>({{ comment.post_date }})</small></h3>
 						<p>{{ comment.content }}</p>
 					</div>
 				</li>
@@ -21,38 +21,41 @@
 		</ul>
 	</div>
 
-	Tags:
-	{% for tag in tags %}
-		{{ tag.name }}
-	{% endfor %}
-
 	{% if user.is_authenticated and usrBoard %}
-		<h3>Comments</h3>
+		<h3>Post new comment</h3>
 		<form method='post' action="/board/{{ board.board_tag }}/{{ image.boardID}}/">
 			{% csrf_token %}
 			{{ formset_comments }}
-			<input type="submit" name="comment_form" value="Submit"/>
+			<input type="submit" name="comment_form" value="Submit" class="btn btn-default"/>
 		</form>
 	{% endif %}
+{% endblock %}
 
+{% block sidebarLocal%}
 	{% if user.is_authenticated %}
 		{% if usrBoard.priviledge_level == "ADM" or usrBoard.priviledge_level == "MOD" or image.uploader.id = user.id %}
-			<h3>Image tag admin</h3>
-			{% if missing_tags > 0 %}
-			<h4>Add tags</h4>
-			<form method='post' action="/board/{{ board.board_tag }}/{{ image.boardID}}/">
-				{% csrf_token %}
-				{{ formset_tags }}
-				<input type="submit" name="tags_form" value="Submit"/>
-			</form>
-			{% endif %}
+			<ul class="nav nav-sidebar">
+				<li class="active"><a href="#">Image tag admin</a><li>
+				{% if missing_tags > 0 %}
+				<li><a href="#">Add tags</a></li>
+				<form method='post' action="/board/{{ board.board_tag }}/{{ image.boardID}}/">
+					<div class="form-group">
+						{% csrf_token %}
+						{{ formset_tags }}
+					</div>
+					<input type="submit" name="tags_form" value="Add tags" class="btn btn-primary"/>
+				</form>
+				{% endif %}
 
-			{% if tags.count > 0 %}
-				<h4>Remove tags</h4>
-				{% for tag in tags %}
-					<a href="/imagetags/{{ board.board_tag }}/{{ image.boardID }}/remove/{{ tag.name }}">Remove {{ tag.name }}?</a>
-				{% endfor %}
-			{% endif %}
+				{% if tags.count > 0 %}
+					<li><a href="#">Remove tags</a></li>
+					{% for tag in tags %}
+						<ul>
+							<li><a href="/imagetags/{{ board.board_tag }}/{{ image.boardID }}/remove/{{ tag.name }}">Remove {{ tag.name }}?</a></li>
+						</ul>
+					{% endfor %}
+				{% endif %}
+			</ul>
 		{% endif %}
 	{% endif %}
 {% endblock %}

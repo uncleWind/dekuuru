@@ -4,39 +4,48 @@
 
 {% block content %}
 	<h1>{{ board }}</h1>
-{% for img in images %}
-	<a href="/board/{{ board.board_tag }}/{{ img.boardID }}">
-		<img src="{{ MEDIA_ROOT }}/{{ img.URI.url_200x200 }}"/>
-	</a>
-{% endfor %}
+	<div class="container-fluid">
+		{% for img in images %}
+			<div class="col-md-2">
+				<a href="/board/{{ board.board_tag }}/{{ img.boardID }}">
+					<img src="{{ MEDIA_ROOT }}/{{ img.URI.url_200x200 }}" class="img-thumbnail"/>
+				</a>
+			</div>
+		{% endfor %}
+	</div>
 
 {% endblock %}
 
 {% block sidebarLocal%}
-	<div>
-		<a href="members/">Members</a>
+	<ul class="nav nav-sidebar">
+		<li class="active"><a href="#">Board panel</a><li>
+		<li><a href="members/">Members</a></li>
 		{% if user.is_authenticated %}
 			{% if usrBoard.priviledge_level != "STD" %}
-				<a href="addimage/">Add Image</a>
+				<li><a href="addimage/">Add Image</a></li>
 				{% if usrBoard.priviledge_level != "UPL" %}
-					<a href="/boardtags/{{ board.board_tag }}/">Add tag</a>
+					<li><a href="/boardtags/{{ board.board_tag }}/">Add tag</a></li>
 				{% endif %}
 				{% if usrBoard.priviledge_level == "ADM" %}
-					<a href="admin/">Board admin</a>
+					<li><a href="admin/">Board admin</a></li>
 				{% endif %}
 			{% endif %}
 		{% endif %}
-	</div>
-	<div>
-		<h3>Tags:</h3>
+	</ul>
+	<ul class="nav nav-sidebar">
+		<li class="active"><a href="#">Board tags</a></li>
+		<ul>
 		{% for tag in tags %}
-			<strong>{{ tag.name }}</strong>
-			{% if user.is_authenticated %}	
+			<li><a href="#"><strong>{{ tag.name }}</strong></a></li>
+			{% if user.is_authenticated %}
 				{% if usrBoard.priviledge_level == "ADM" or usrBoard.priviledge_level == "MOD" %}
-					<a href="/boardtags/{{ board.board_tag }}/edit/{{ tag.name }}">Edit tag</a>
-					<a href="/boardtags/{{ board.board_tag }}/remove/{{ tag.name }}">Remove tag</a>
+					<ul class="list-unstyled">
+						<li><a href="/boardtags/{{ board.board_tag }}/edit/{{ tag.name }}">Edit tag</a></li>
+						<li><a href="/boardtags/{{ board.board_tag }}/remove/{{ tag.name }}">Remove tag</a></li>
+					</ul>
 				{% endif %}
 			{% endif %}
 		{% endfor %}
-	</div>
+		</ul>
+	</ul>
 {% endblock %}

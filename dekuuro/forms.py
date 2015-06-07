@@ -20,7 +20,7 @@ class MissingTagsForm(ModelForm):
 		image = kwargs.pop('image')
 
 		super(MissingTagsForm, self).__init__(*args, **kwargs)
-		self.fields['tags'] = forms.ModelMultipleChoiceField(required=True, queryset=Tag.objects.filter(board=image.board).exclude(name__in = image.tags.values_list('name', flat=True)))
+		self.fields['tags'] = forms.ModelMultipleChoiceField(required=True, label='', queryset=Tag.objects.filter(board=image.board).exclude(name__in = image.tags.values_list('name', flat=True)))
 
 	class Meta:
 		model = Image
@@ -48,13 +48,13 @@ class UserForm(ModelForm):
 		widgets = {
 			'password'	: forms.PasswordInput(),
 		}
-	
+
 	def clean_email(self):
 		mail = self.cleaned_data['email']
 		if User.objects.filter(email=mail).exists():
 			raise ValidationError('Email already exists')
 		return mail
-	
+
 	def clean(self):
 		data = self.cleaned_data
 		if data['password'] != data['password2']:
@@ -73,15 +73,15 @@ class BoardForm(ModelForm):
 		fields = '__all__'
 
 class SearchForm(forms.Form):
-	searchString = forms.CharField(label='Search', max_length=1000)
+	searchString = forms.CharField(label='', max_length=1000, widget=forms.TextInput(attrs={'class':'form-control'}))
 
 class BoardUserForm(ModelForm):
 	user = forms.CharField(max_length=30)
-	
+
 	class Meta:
 		model = BoardUsers
 		fields = ('user','priviledge_level')
-	
+
 	def clean(self):
 		data = self.cleaned_data
 		if not User.objects.filter(username=data['user']).exists():
@@ -90,11 +90,10 @@ class BoardUserForm(ModelForm):
 		else:
 			data['user'] = User.objects.get(username=data['user'])
 		return data
-	
+
 	#def save(self, commit=False):
 	#	username = self.cleaned_data['user']
 	#	usr = User.objects.get(username=username)
 	#	self.instance.user = usr
-	#	
+	#
 	#	return super(BoardUserForm, self).save(commit)
-		

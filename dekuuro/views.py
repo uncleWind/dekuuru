@@ -125,8 +125,14 @@ def imageDetailsView(Request, boardTag, boardImageID):
 	comments = Comment.objects.filter(image=image)
 	tags = image.tags.all()
 	missing_tags_count = Tag.objects.filter(board=image.board).exclude(name__in = image.tags.values_list('name', flat=True)).count()
+
+	try:
+  		usrBoard = BoardUsers.objects.get(user=Request.user.id, board=image.board)
+ 	except BoardUsers.DoesNotExist:
+  		usrBoard = None
+
 	return render(Request, 'imageDetails.html', { 'formset_comments':formset_comments.as_p(), 'formset_tags':formset_tags.as_p(),
-	 'image':image, 'board':image.board, 'comments':comments, 'tags':tags, 'missing_tags':missing_tags_count, 'search_form' : SearchForm()})
+	 'image':image, 'board':image.board, 'usrBoard':usrBoard, 'comments':comments, 'tags':tags, 'missing_tags':missing_tags_count, 'search_form' : SearchForm()})
 
 def boardTagsView(Request, boardTag):
 	board = Board.objects.get(board_tag=boardTag)
@@ -301,7 +307,7 @@ def boardAdminView(Request, boardTag):
 					oldPriv.save()
 				else:
 					raise PermissionDenied
-			except User.DoesNotExist:
+			except BoardUsers.DoesNotExist:
 				newPriv.board = Board.objects.get(board_tag=boardTag)
 				newPriv.save()
 			return HttpResponseRedirect('/board/' + boardTag + '/')
