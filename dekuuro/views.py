@@ -81,7 +81,7 @@ def addImageView(Request, boardTag):
 		if usrBoard.priviledge_level == 'STD':
 			raise PermissionDenied
 	except BoardUsers.DoesNotExist:
-		return permission_denied()
+		raise PermissionDenied
 	boardId = Board.objects.get(board_tag=boardTag)
 	if Request.method == 'POST':
 		formset = ImageForm(Request.POST, Request.FILES, boardId=boardId)
@@ -282,12 +282,40 @@ def searchView(Request):
 		formset = SearchForm();
 	return render(Request, 'search.html', { 'images':search_images, 'search_form':formset })
 
+@login_required(login_url='login')
+def boardAdminView(Request, boardTag):
+	try:
+		usrBoard = BoardUsers.objects.get(user=Request.user.id, board__board_tag=boardTag)
+		if usrBoard.priviledge_level != 'ADM':
+			raise PermissionDenied
+	except BoardUsers.DoesNotExist:
+		raise PermissionDenied
+	if Request.method == 'POST':
+		formset = BoardUserForm(Request.POST, initial={'user':usrBoard.user})
+		if formset.is_valid():
+			newPriv = formset.save(commit=False)
+			try:
+				oldPriv = BoardUsers.objects.get(user=newPriv.user, board=usrBoard.board)
+				if oldPriv.priviledge_level != 'ADM':
+					oldPriv.priviledge_level=newPriv.priviledge_level
+					oldPriv.save()
+				else:
+					raise PermissionDenied
+			except User.DoesNotExist:
+				newPriv.board = Board.objects.get(board_tag=boardTag)
+				newPriv.save()
+			return HttpResponseRedirect('/board/' + boardTag + '/')
+	else:
+		formset = BoardUserForm()
+	return render(Request, 'boardAdmin.html', { 'formset' : formset.as_p(), 'usrBoard' : usrBoard, 'board' : usrBoard.board, 'search_form' : SearchForm()})
+
+def boardMembersView(Request, boardTag):
+	users = BoardUsers.objects.filter(board__board_tag=boardTag).order_by('priviledge_level', 'user')
+	return render(Request, 'boardMembers.html', { 'users' : users, 'board' : users[0].board, 'search_form' : SearchForm()})
+
 #TODO templates
 def profileView(Request):
 	return render(Request, 'profile.html')
 
 def subscriptionsView(Request):
 	return render(Request, 'subscriptions.html')
-
-def inviteUsersView(Request):
-	return render(Request, 'inviteUsers.html')

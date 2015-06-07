@@ -13,26 +13,30 @@
 {% endblock %}
 
 {% block sidebarLocal%}
-	{% if user.is_authenticated %}
-		<div>
+	<div>
+		<a href="members/">Members</a>
+		{% if user.is_authenticated %}
 			{% if usrBoard.priviledge_level != "STD" %}
 				<a href="addimage/">Add Image</a>
 				{% if usrBoard.priviledge_level != "UPL" %}
 					<a href="/boardtags/{{ board.board_tag }}/">Add tag</a>
 				{% endif %}
-			{% endif %}
-		</div>
-	{% endif %}
-		<div>
-			<h3>Tags:</h3>
-			{% for tag in tags %}
-				<strong>{{ tag.name }}</strong>
-				{% if user.is_authenticated %}	
-					{% if usrBoard.priviledge_level == "ADM" or usrBoard.priviledge_level == "MOD" %}
-						<a href="/boardtags/{{ board.board_tag }}/edit/{{ tag.name }}">Edit tag</a>
-						<a href="/boardtags/{{ board.board_tag }}/remove/{{ tag.name }}">Remove tag</a>
-					{% endif %}
+				{% if usrBoard.priviledge_level == "ADM" %}
+					<a href="admin/">Board admin</a>
 				{% endif %}
-			{% endfor %}
-		</div>
+			{% endif %}
+		{% endif %}
+	</div>
+	<div>
+		<h3>Tags:</h3>
+		{% for tag in tags %}
+			<strong>{{ tag.name }}</strong>
+			{% if user.is_authenticated %}	
+				{% if usrBoard.priviledge_level == "ADM" or usrBoard.priviledge_level == "MOD" %}
+					<a href="/boardtags/{{ board.board_tag }}/edit/{{ tag.name }}">Edit tag</a>
+					<a href="/boardtags/{{ board.board_tag }}/remove/{{ tag.name }}">Remove tag</a>
+				{% endif %}
+			{% endif %}
+		{% endfor %}
+	</div>
 {% endblock %}

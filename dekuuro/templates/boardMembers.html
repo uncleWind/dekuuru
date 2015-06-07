@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}{{ board }} - Members{% endblock %}
+
+{% block content %}
+	<h2><a href="/board/{{ board.board_tag }}/">/{{ board.board_tag }}/</a> - Members</h2>
+
+	<ol>
+		{% for boardUser in users %}
+			<li>
+				<a href="/userprofile/{{ boardUser.user.username }}/">{{ boardUser.user.username }}</a> - {{ boardUser.priviledge_level }}
+			</li>
+		{% endfor %}
+	</ol>
+{% endblock %}

@@ -74,3 +74,27 @@ class BoardForm(ModelForm):
 
 class SearchForm(forms.Form):
 	searchString = forms.CharField(label='Search', max_length=1000)
+
+class BoardUserForm(ModelForm):
+	user = forms.CharField(max_length=30)
+	
+	class Meta:
+		model = BoardUsers
+		fields = ('user','priviledge_level')
+	
+	def clean(self):
+		data = self.cleaned_data
+		if not User.objects.filter(username=data['user']).exists():
+			self._errors['user'] = ['User does not exist']
+			del data['user']
+		else:
+			data['user'] = User.objects.get(username=data['user'])
+		return data
+	
+	#def save(self, commit=False):
+	#	username = self.cleaned_data['user']
+	#	usr = User.objects.get(username=username)
+	#	self.instance.user = usr
+	#	
+	#	return super(BoardUserForm, self).save(commit)
+		
