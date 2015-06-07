@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}/{{ board.board_tag }}/ - {{ board.name }}{% endblock %}
+{% block title %}{{ board }}{% endblock %}
 
 {% block content %}
-	<h1>/{{ board.board_tag }}/ - {{ board.name }}</h1>
+	<h1>{{ board }}</h1>
 {% for img in images %}
 	<a href="/board/{{ board.board_tag }}/{{ img.boardID }}">
 		<img src="{{ MEDIA_ROOT }}/{{ img.URI.url_200x200 }}"/>
@@ -13,17 +13,26 @@
 {% endblock %}
 
 {% block sidebarLocal%}
-	<div>
-		<a href="addimage/">Add Image</a>
-		<a href="/boardtags/{{ board.board_tag }}/">Add tag</a>
-	</div>
-	<div>
-		Tags:
-		{% for tag in tags %}
-			<br/>
-			<strong>{{ tag.name }}</strong>
-			<a href="/boardtags/{{ board.board_tag }}/edit/{{ tag.name }}">Edit tag</a>
-			<a href="/boardtags/{{ board.board_tag }}/remove/{{ tag.name }}">Remove tag</a>
-		{% endfor %}
-	</div>
+	{% if user.is_authenticated %}
+		<div>
+			{% if usrBoard.priviledge_level != "STD" %}
+				<a href="addimage/">Add Image</a>
+				{% if usrBoard.priviledge_level != "UPL" %}
+					<a href="/boardtags/{{ board.board_tag }}/">Add tag</a>
+				{% endif %}
+			{% endif %}
+		</div>
+	{% endif %}
+		<div>
+			<h3>Tags:</h3>
+			{% for tag in tags %}
+				<strong>{{ tag.name }}</strong>
+				{% if user.is_authenticated %}	
+					{% if usrBoard.priviledge_level == "ADM" or usrBoard.priviledge_level == "MOD" %}
+						<a href="/boardtags/{{ board.board_tag }}/edit/{{ tag.name }}">Edit tag</a>
+						<a href="/boardtags/{{ board.board_tag }}/remove/{{ tag.name }}">Remove tag</a>
+					{% endif %}
+				{% endif %}
+			{% endfor %}
+		</div>
 {% endblock %}

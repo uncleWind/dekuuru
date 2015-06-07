@@ -16,7 +16,7 @@ class Board(models.Model):
 	board_tag = models.CharField(max_length=15, blank=False, unique=True)
 	
 	def __unicode__(self):
-		return self.name
+		return '/%s/ - %s' % (self.board_tag, self.name)
 
 class BoardSubscription(models.Model):
 	user = models.ForeignKey(User, blank=False)
@@ -83,4 +83,4 @@ class BoardUsers(models.Model):
 		unique_together = ('board', 'user',)
 		
 	def __unicode__(self):
-		return u'%s - %s' (self.board, self.user)
+		return u'%s %s' % (self.board, self.user)

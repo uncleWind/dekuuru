@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
+from django.core.exceptions import PermissionDenied
 
 # Create your views here.
 
@@ -22,7 +23,9 @@ def loginView(Request):
 			if user is not None:
 				if user.is_active:
 					login(Request, user)
-					return HttpResponseRedirect('/')
+				if Request.POST['next']:
+					return HttpResponseRedirect(Request.POST['next'])
+				return HttpResponseRedirect('/')
 			loginError = 'Login data incorrect.'
 	else:
 		formset = LoginForm()
@@ -64,10 +67,21 @@ def boardView(Request, boardTag):
 	currBoard = Board.objects.get(board_tag=boardTag)
 	images = Image.objects.filter(board=currBoard).order_by('-upload_date')
 	tags = Tag.objects.filter(board=currBoard)
-	return render(Request, 'board.html', {'images' : images , 'board' : currBoard, 'tags' : tags, 'search_form' : SearchForm()})
+	try:
+		usrBoard = BoardUsers.objects.get(user=Request.user.id, board=currBoard)
+	except BoardUsers.DoesNotExist:
+		usrBoard = None
+	return render(Request, 'board.html', {'images' : images , 'board' : currBoard, 'tags' : tags, 'usrBoard' : usrBoard,
+	 'search_form' : SearchForm()})
 
 @login_required(login_url='login')
 def addImageView(Request, boardTag):
+	try:
+		usrBoard = BoardUsers.objects.get(user=Request.user.id, board__board_tag=boardTag)
+		if usrBoard.priviledge_level == 'STD':
+			raise PermissionDenied
+	except BoardUsers.DoesNotExist:
+		return permission_denied()
 	boardId = Board.objects.get(board_tag=boardTag)
 	if Request.method == 'POST':
 		formset = ImageForm(Request.POST, Request.FILES, boardId=boardId)
@@ -87,8 +101,7 @@ def boardsView(Request):
 	return render(Request, 'boards.html', { 'boards' : boards , 'search_form' : SearchForm()})
 
 def imageDetailsView(Request, boardTag, boardImageID):
-	board = Board.objects.get(board_tag=boardTag)
-	image = Image.objects.get(board=board, boardID=boardImageID)
+	image = Image.objects.get(board__board_tag=boardTag, boardID=boardImageID)
 	if Request.method == 'POST' and Request.user.is_authenticated():
 		if 'comment_form' in Request.POST:
 			formset_comments = CommentForm(Request.POST)
@@ -112,7 +125,8 @@ def imageDetailsView(Request, boardTag, boardImageID):
 	comments = Comment.objects.filter(image=image)
 	tags = image.tags.all()
 	missing_tags_count = Tag.objects.filter(board=image.board).exclude(name__in = image.tags.values_list('name', flat=True)).count()
-	return render(Request, 'imageDetails.html', { 'formset_comments':formset_comments.as_p(), 'formset_tags':formset_tags.as_p(), 'image':image, 'board':board, 'comments':comments, 'tags':tags, 'missing_tags':missing_tags_count, 'search_form' : SearchForm()})
+	return render(Request, 'imageDetails.html', { 'formset_comments':formset_comments.as_p(), 'formset_tags':formset_tags.as_p(),
+	 'image':image, 'board':image.board, 'comments':comments, 'tags':tags, 'missing_tags':missing_tags_count, 'search_form' : SearchForm()})
 
 def boardTagsView(Request, boardTag):
 	board = Board.objects.get(board_tag=boardTag)

@@ -24,7 +24,7 @@
 						<a href="/admin">Admin</a>
 					{% endif %}
 				{% else %}
-					<a href="{% url 'login' %}">Login</a>
+					<a href="{% url 'login' %}?next={{ request.path }}">Login</a>
 					<a href="{% url 'register' %}">Register</a>
 				{% endif %}
 			</div>

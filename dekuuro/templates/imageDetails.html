@@ -1,56 +1,58 @@
 {% extends "base.html" %}
 
-{% block title %}/{{ board.board_tag }}/ - {{ board.name }}@{{ image.boardID }}{% endblock %}
+{% block title %}{{ board }}@{{ image.boardID }}{% endblock %}
 
 {% block content %}
-<h1>@ <a href="/board/{{ board.board_tag }}/">/{{ board.board_tag }}/</a> - {{ board.name }}</h1>
+	<h1>@ <a href="/board/{{ board.board_tag }}/">/{{ board.board_tag }}/</a> - {{ board.name }}</h1>
 
-<img src="{{ MEDIA_ROOT }}/{{ image.URI.url }}"/>
-<div>
-	<ul>
-		{% for comment in comments %}
-			<li>
-				<div>
-					<h3>{{ comment.poster }}</h3>
-					<h4>{{ comment.post_date }}</h4>
-					<p>{{ comment.content }}</p>
-				</div>
-			</li>
-		{% endfor %}
-	</ul>
-</div>
+	<img src="{{ MEDIA_ROOT }}/{{ image.URI.url }}"/>
+	<h5>Uploaded by {{ image.uploader }} on {{ image.upload_date }}</h5>
+	<div>
+		<ul>
+			{% for comment in comments %}
+				<li>
+					<div>
+						<h3>{{ comment.poster }}</h3>
+						<h4>{{ comment.post_date }}</h4>
+						<p>{{ comment.content }}</p>
+					</div>
+				</li>
+			{% endfor %}
+		</ul>
+	</div>
 
-Tags:
-{% for tag in tags %}
-	{{ tag.name }}
-{% endfor %}
+	Tags:
+	{% for tag in tags %}
+		{{ tag.name }}
+	{% endfor %}
 
-{% if user.is_authenticated %}
-	<h3>Comments</h3>
-	<form method='post' action="/board/{{ board.board_tag }}/{{ image.boardID}}/">
-		{% csrf_token %}
-		{{ formset_comments }}
-		<input type="submit" name="comment_form" value="Submit"/>
-	</form>
-{% endif %}
-
-{% if user.is_authenticated %}
-	<h3>Image tag admin</h3>
-	{% if missing_tags > 0 %}
-	<h4>Add tags</h4>
-	<form method='post' action="/board/{{ board.board_tag }}/{{ image.boardID}}/">
-		{% csrf_token %}
-		{{ formset_tags }}
-		<input type="submit" name="tags_form" value="Submit"/>
-	</form>
+	{% if user.is_authenticated and usrBoard %}
+		<h3>Comments</h3>
+		<form method='post' action="/board/{{ board.board_tag }}/{{ image.boardID}}/">
+			{% csrf_token %}
+			{{ formset_comments }}
+			<input type="submit" name="comment_form" value="Submit"/>
+		</form>
 	{% endif %}
 
-	{% if tags.count > 0 %}
-		<h4>Remove tags</h4>
-		{% for tag in tags %}
-			<a href="/imagetags/{{ board.board_tag }}/{{ image.boardID }}/remove/{{ tag.name }}">Remove {{ tag.name }}?</a>
-		{% endfor %}
-	{% endif %}
-{% endif %}
+	{% if user.is_authenticated %}
+		{% if usrBoard.priviledge_level == "ADM" or usrBoard.priviledge_level == "MOD" or image.uploader.id = user.id %}
+			<h3>Image tag admin</h3>
+			{% if missing_tags > 0 %}
+			<h4>Add tags</h4>
+			<form method='post' action="/board/{{ board.board_tag }}/{{ image.boardID}}/">
+				{% csrf_token %}
+				{{ formset_tags }}
+				<input type="submit" name="tags_form" value="Submit"/>
+			</form>
+			{% endif %}
 
+			{% if tags.count > 0 %}
+				<h4>Remove tags</h4>
+				{% for tag in tags %}
+					<a href="/imagetags/{{ board.board_tag }}/{{ image.boardID }}/remove/{{ tag.name }}">Remove {{ tag.name }}?</a>
+				{% endfor %}
+			{% endif %}
+		{% endif %}
+	{% endif %}
 {% endblock %}
