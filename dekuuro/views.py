@@ -65,7 +65,15 @@ def registrationView(Request):
 
 def boardView(Request, boardTag):
 	currBoard = Board.objects.get(board_tag=boardTag)
-	images = Image.objects.filter(board=currBoard).order_by('-upload_date')
+	image_list = Image.objects.filter(board=currBoard).order_by('-upload_date')
+	paginator = Paginator(image_list, 20)
+	page = Request.GET.get('page')
+	try:
+		images = paginator.page(page)
+	except PageNotAnInteger:
+		images = paginator.page(1)
+	except EmptyPage:
+		images = paginator.page(paginator.num_pages)
 	tags = Tag.objects.filter(board=currBoard)
 	try:
 		usrBoard = BoardUsers.objects.get(user=Request.user.id, board=currBoard)
