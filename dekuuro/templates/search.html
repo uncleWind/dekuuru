@@ -4,9 +4,31 @@
 
 {% block content %}
 	<h1>Search</h1>
-	{% for img in images %}
-		<a href="/board/{{ img.board.board_tag }}/{{ img.boardID }}">
-			<img src="{{ MEDIA_ROOT }}/{{ img.URI.url_200x200 }}"/>
-		</a>
-	{% endfor %}
+
+	<div class="container-fluid">
+		{% for img in images %}
+			<div class="col-md-2">
+				<a href="/board/{{ img.board.board_tag }}/{{ img.boardID }}">
+					<img src="{{ MEDIA_ROOT }}/{{ img.URI.url_200x200 }}" class="img-thumbnail"/>
+				</a>
+			</div>
+		{% endfor %}
+	</div>
+
+	<div>
+		{% if images.has_previous %}
+			<a href="?page={{images.previous_page_number}}">Prev</a>
+		{% else %}
+			Prev
+		{% endif %}
+		<!-- <p> -->
+			Page {{ images.number }} of {{ images.paginator.num_pages }}
+		<!-- </p> -->
+		{% if images.has_next %}
+			<a href="?page={{images.next_page_number}}">Next</a>
+		{% else %}
+			Next
+		{% endif %}
+	</div>
+
 {% endblock %}
