@@ -7,7 +7,7 @@
 <form method="post" action="{% url 'login' %}">
 	{% csrf_token %}
 	{{ formset }}
-	<input type="hidden" name="next" value="{{ request.GET.next }}" />
+	<input type="hidden" name="next" value="{{ Next }}" />
 	<input type="submit" value="Login"/>
 	<h3>{{ loginError }}</h3>
 </form>

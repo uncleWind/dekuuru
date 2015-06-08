@@ -16,6 +16,10 @@ def loginView(Request):
 	loginError = ''
 	if Request.method == 'POST':
 		formset = LoginForm(Request.POST)
+		if Request.POST['next']:
+			Next = Request.POST['next']
+		else:
+			Next = '/'
 		if formset.is_valid():
 			username = formset.cleaned_data['username']
 			password = formset.cleaned_data['password']
@@ -23,13 +27,18 @@ def loginView(Request):
 			if user is not None:
 				if user.is_active:
 					login(Request, user)
-				if Request.POST['next']:
-					return HttpResponseRedirect(Request.POST['next'])
-				return HttpResponseRedirect('/')
+				return HttpResponseRedirect(Next)
 			loginError = 'Login data incorrect.'
 	else:
 		formset = LoginForm()
-	return render(Request, 'login.html', { 'formset' : formset.as_p(), 'loginError' : loginError, 'search_form' : SearchForm()})
+		if Request.method == 'GET':
+			if Request.GET['next']:
+				Next = Request.GET['next']
+			else:
+				Next ='/'
+		else:
+			Next = '/'
+	return render(Request, 'login.html', { 'formset' : formset.as_p(), 'Next' : Next , 'loginError' : loginError, 'search_form' : SearchForm()})
 
 def logoutView(Request):
 	logout(Request)
