@@ -20,7 +20,7 @@
 	<ul class="nav nav-sidebar">
 		<li class="active"><a href="#">Board panel</a><li>
 		<li><a href="members/">Members</a></li>
-		{% if user.is_authenticated %}
+		{% if user.is_authenticated and usrBoard %}
 			{% if usrBoard.priviledge_level != "STD" %}
 				<li><a href="addimage/">Add Image</a></li>
 				{% if usrBoard.priviledge_level != "UPL" %}

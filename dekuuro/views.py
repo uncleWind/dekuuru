@@ -94,7 +94,7 @@ def addImageView(Request, boardTag):
 			return HttpResponseRedirect('/board/%s/' % (boardTag))
 	else:
 		formset = ImageForm(boardId=boardId)
-	return render(Request, 'addImage.html', { 'formset' : formset.as_p() , 'boardTag' : boardTag, 'search_form' : SearchForm()})
+	return render(Request, 'addImage.html', { 'formset' : formset.as_p() , 'boardTag' : boardTag, 'usrBoard':usrBoard,  'search_form' : SearchForm()})
 
 def boardsView(Request):
 	boards = Board.objects.all()
@@ -135,6 +135,11 @@ def imageDetailsView(Request, boardTag, boardImageID):
 	 'image':image, 'board':image.board, 'usrBoard':usrBoard, 'comments':comments, 'tags':tags, 'missing_tags':missing_tags_count, 'search_form' : SearchForm()})
 
 def boardTagsView(Request, boardTag):
+	try:
+		usrBoard = BoardUsers.objects.get(user=Request.user.id, board__board_tag=boardTag)
+	except BoardUsers.DoesNotExist:
+		raise PermissionDenied
+
 	board = Board.objects.get(board_tag=boardTag)
 	if Request.method == 'POST' and Request.user.is_authenticated():
 		formset = TagForm(Request.POST)
@@ -146,7 +151,7 @@ def boardTagsView(Request, boardTag):
 	else:
 		formset = TagForm()
 	activeTags = Tag.objects.filter(board=board)
-	return render(Request, 'boardTags.html', { 'formset':formset.as_p(), 'board':board, 'tags':activeTags , 'search_form' : SearchForm()})
+	return render(Request, 'boardTags.html', { 'formset':formset.as_p(), 'board':board, 'tags':activeTags , 'usrBoard':usrBoard, 'search_form' : SearchForm()})
 
 def editTagView(Request, boardTag, tagName):
 	board = Board.objects.get(board_tag=boardTag)
@@ -201,7 +206,7 @@ def userCommentsView(Request, username):
 
 def mainPageView(Request):
 	image_list = Image.objects.all().order_by('-upload_date')
-	paginator = Paginator(image_list, 20)
+	paginator = Paginator(image_list, 24)
 	page = Request.GET.get('page')
 	try:
 		images = paginator.page(page)
@@ -316,8 +321,14 @@ def boardAdminView(Request, boardTag):
 	return render(Request, 'boardAdmin.html', { 'formset' : formset.as_p(), 'usrBoard' : usrBoard, 'board' : usrBoard.board, 'search_form' : SearchForm()})
 
 def boardMembersView(Request, boardTag):
+	currBoard = Board.objects.get(board_tag=boardTag)
+	try:
+		usrBoard = BoardUsers.objects.get(user=Request.user.id, board=currBoard)
+	except BoardUsers.DoesNotExist:
+		usrBoard = None
+
 	users = BoardUsers.objects.filter(board__board_tag=boardTag).order_by('priviledge_level', 'user')
-	return render(Request, 'boardMembers.html', { 'users' : users, 'board' : users[0].board, 'search_form' : SearchForm()})
+	return render(Request, 'boardMembers.html', { 'users' : users, 'usrBoard':usrBoard, 'board' : users[0].board, 'search_form' : SearchForm()})
 
 #TODO templates
 def profileView(Request):

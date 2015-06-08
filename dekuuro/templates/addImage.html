@@ -10,3 +10,22 @@
 		<input type="submit" value="Upload"/>
 	</form>
 {% endblock %}
+
+{% block sidebarLocal%}
+	<ul class="nav nav-sidebar">
+		<li class="active"><a href="/board/{{ boardTag }}/">Board panel</a><li>
+		<li><a href="/board/{{ boardTag }}/members/">Members</a></li>
+		{% if user.is_authenticated and usrBoard %}
+			<!-- <li><a href="#">yay</a></li> -->
+			{% if usrBoard.priviledge_level != "STD" %}
+				<li><a href="/board/{{ boardTag }}/addimage/">Add Image</a></li>
+				{% if usrBoard.priviledge_level != "UPL" %}
+					<li><a href="/boardtags/{{ boardTag }}/">Add tag</a></li>
+				{% endif %}
+				{% if usrBoard.priviledge_level == "ADM" %}
+					<li><a href="/board/{{ boardTag }}/admin/">Board admin</a></li>
+				{% endif %}
+			{% endif %}
+		{% endif %}
+	</ul>
+{% endblock %}

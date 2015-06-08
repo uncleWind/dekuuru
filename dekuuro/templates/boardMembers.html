@@ -13,3 +13,21 @@
 		{% endfor %}
 	</ol>
 {% endblock %}
+
+{% block sidebarLocal%}
+	<ul class="nav nav-sidebar">
+		<li class="active"><a href="/board/{{ board.board_tag }}/">Board panel</a><li>
+		<li><a href="/board/{{ board.board_tag }}/members/">Members</a></li>
+		{% if user.is_authenticated and usrBoard %}
+			{% if usrBoard.priviledge_level != "STD" %}
+				<li><a href="/board/{{ board.board_tag }}/addimage/">Add Image</a></li>
+				{% if usrBoard.priviledge_level != "UPL" %}
+					<li><a href="/boardtags/{{ board.board_tag }}/">Add tag</a></li>
+				{% endif %}
+				{% if usrBoard.priviledge_level == "ADM" %}
+					<li><a href="/board/{{ board.board_tag }}/admin/">Board admin</a></li>
+				{% endif %}
+			{% endif %}
+		{% endif %}
+	</ul>
+{% endblock %}
