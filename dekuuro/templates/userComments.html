@@ -3,14 +3,13 @@
 {% block title %}{{ username }} - Comments{% endblock %}
 
 {% block content %}
-	<h2>Comments by {{ username }}</h2>
+	<h2>Comments by <a href="/userprofile/{{ username }}/">{{ username }}</a></h2>
 	<div>
-		<ul>
+		<ul class="list-unstyled">
 			{% for comment in comments %}
 				<li>
 					<div>
-						<h3>{{ comment.poster }} on <a href="/board/{{ comment.image.board.board_tag }}/{{ comment.image.boardID }}">image</a></h3>
-						<h4>{{ comment.post_date }}</h4>
+						<h3>{{ comment.poster }} <small>({{ comment.post_date }})</small> on <a href="/board/{{ comment.image.board.board_tag }}/{{ comment.image.boardID }}">/{{ comment.image.board.board_tag }}/{{ comment.image.boardID }}</a></h3>
 						<p>{{ comment.content }}</p>
 					</div>
 				</li>
