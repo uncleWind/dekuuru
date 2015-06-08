@@ -187,7 +187,9 @@ def userProfileView(Request, username):
 	user = User.objects.get(username=username)
 	img_count = Image.objects.filter(uploader=user).count()
 	comment_count = Comment.objects.filter(poster=user).count()
-	return render(Request, 'userProfile.html', { 'img_count' : img_count, 'comment_count' : comment_count , 'username' : username, 'search_form' : SearchForm() })
+	board_privs = BoardUsers.objects.filter(user=user)
+	return render(Request, 'userProfile.html', { 'img_count' : img_count, 'comment_count' : comment_count , 'user' : user,
+	 'board_privs' : board_privs, 'search_form' : SearchForm() })
 
 def userUploadsView(Request, username):
 	user = User.objects.get(username=username)
