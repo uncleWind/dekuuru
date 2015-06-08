@@ -13,7 +13,17 @@
 			</div>
 		{% endfor %}
 	</div>
-
+	<div>
+		{% if images.has_previous %}
+			<a href="?page={{images.previous_page_number}}">Prev</a>
+		{% endif %}
+		<p>
+			Page {{ images.number }} of {{ images.paginator.num_pages }}
+		</p>
+		{% if images.has_next %}
+			<a href="?page={{images.next_page_number}}">Next</a>
+		{% endif %}
+	</div>
 {% endblock %}
 
 {% block sidebarLocal%}

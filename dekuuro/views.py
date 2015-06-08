@@ -65,7 +65,15 @@ def registrationView(Request):
 
 def boardView(Request, boardTag):
 	currBoard = Board.objects.get(board_tag=boardTag)
-	images = Image.objects.filter(board=currBoard).order_by('-upload_date')
+	image_list = Image.objects.filter(board=currBoard).order_by('-upload_date')
+	paginator = Paginator(image_list, 20)
+	page = Request.GET.get('page')
+	try:
+		images = paginator.page(page)
+	except PageNotAnInteger:
+		images = paginator.page(1)
+	except EmptyPage:
+		images = paginator.page(paginator.num_pages)
 	tags = Tag.objects.filter(board=currBoard)
 	try:
 		usrBoard = BoardUsers.objects.get(user=Request.user.id, board=currBoard)
@@ -192,7 +200,9 @@ def userProfileView(Request, username):
 	user = User.objects.get(username=username)
 	img_count = Image.objects.filter(uploader=user).count()
 	comment_count = Comment.objects.filter(poster=user).count()
-	return render(Request, 'userProfile.html', { 'img_count' : img_count, 'comment_count' : comment_count , 'username' : username, 'search_form' : SearchForm() })
+	board_privs = BoardUsers.objects.filter(user=user)
+	return render(Request, 'userProfile.html', { 'img_count' : img_count, 'comment_count' : comment_count , 'user' : user,
+	 'board_privs' : board_privs, 'search_form' : SearchForm() })
 
 def userUploadsView(Request, username):
 	user = User.objects.get(username=username)
