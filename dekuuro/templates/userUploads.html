@@ -3,7 +3,7 @@
 {% block title %}{{ username }} - Uploads{% endblock %}
 
 {% block content %}
-	<h2>Uploads by - {{ username }}</h2>
+	<h2>Uploads by - <a href="/userprofile/{{ username }}/">{{ username }}</a></h2>
 	<div class="container-fluid">
 		{% for img in images %}
 			<div class="col-md-2">
