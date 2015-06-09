@@ -278,38 +278,44 @@ def searchView(Request):
 				else:
 					excludeList.append(tagPair)
 
-		#Q's - code will -almost- repeat, oh well
-		inclusive_q = Q()
-		exclusive_q = Q()
-
 		#inclusive Q
+		incQ = []
 		for tagPair in includeList:
 			if(len(tagPair) == 2):
 				tag_name = tagPair[1]
 				board_tag_name = tagPair[0]
-				inclusive_q.add(Q(tags__name=tag_name, board__board_tag=board_tag_name), Q.AND)
+				incQ.append(Q(tags__name=tag_name, board__board_tag=board_tag_name))
 			elif tagPair[0].startswith(':'):
 				tag_name = tagPair[0].strip(':');
-				inclusive_q.add(Q(tags__name=tag_name), Q.AND)
+				incQ.append(Q(tags__name=tag_name))
 			else:
 				board_tag_name = tagPair[0]
-				inclusive_q.add(Q(board__board_tag=board_tag_name) , Q.AND)
+				incQ.append(Q(board__board_tag=board_tag_name))
 
 		#exclusive Q
+		excQ = []
 		for tagPair in excludeList:
 			if(len(tagPair) == 2):
 				tag_name = tagPair[0]
 				board_tag_name = tagPair[1]
-				exclusive_q = exclusive_q | Q(tags__name=tag_name, board__board_tag=board_tag_name)
+				excQ.append(Q(tags__name=tag_name, board__board_tag=board_tag_name))
 			elif tagPair[0].startswith(':'):
 				tag_name = tagPair[0].strip(':');
-				exclusive_q = exclusive_q | Q(tags__name=tag_name)
+				excQ.append(Q(tags__name=tag_name))
 			else:
 				board_tag_name = tagPair[0]
-				exclusive_q = exclusive_q | Q(board__board_tag=board_tag_name)
+				excQ.append(Q(board__board_tag=board_tag_name))
 
 		#Made it filter -> exclude -> distinct just to be sure
-		queried_images = Image.objects.filter(inclusive_q).exclude(exclusive_q)
+		queried_images = Image.objects.all()
+		for q in incQ:
+			queried_images = queried_images.filter(q)
+		for q in excQ:
+			queried_images = queried_images.exclude(q)
+		# queried_images.distinct().exclude(exclusive_q)
+		#queried_images = Image.objects.filter(inclusive_q).exclude(exclusive_q)
+		print(queried_images.query)
+
 		queried_images = queried_images.distinct()
 
 		#Clusterfuck emerges
