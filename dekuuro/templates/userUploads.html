@@ -7,7 +7,7 @@
 	<div class="container-fluid">
 		{% for img in images %}
 			<div class="col-md-2">
-				<a href="/board/{{ image.board.board_tag }}/{{ image.boardID }}/">
+				<a href="/board/{{ img.board.board_tag }}/{{ img.boardID }}/">
 					<img src="{{ MEDIA_ROOT }}/{{ img.URI.url_200x200 }}" class="img-thumbnail"/>
 				</a>
 			</div>
