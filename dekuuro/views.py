@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.core.exceptions import PermissionDenied
+import re
 
 # Create your views here.
 
@@ -253,30 +254,32 @@ def searchView(Request):
 	search_subsets = filter(None ,set(search_query.split(',')))
 	for search_subset in search_subsets:
 		search_subset = search_subset.strip(' ')
+		# if len(search_subset) == 0:
+		# 	continue
 		subset_list = filter(None ,set(search_subset.split(' ')))
 		includeList = []
 		excludeList = []
 		# temp. +- analysis
 		for tagString in subset_list:
 			is_exclusive = False
-			if '-' in tagString:
+			if tagString.startswith('-'):
 				is_exclusive = True
-				tagString = tagString.strip('-')
+				tagString = tagString[1:]
 			if len(tagString) > 0:
-			# temp. tag interpret.
-				if ':' in tagString:
+				tagPair = []
+				if re.match('^\/([a-zA-Z])+\/:([a-zA-Z0-9])+$', tagString):
 					tagPair = tagString.split(':')
 					tagPair[0] = tagPair[0].strip('/')
-				elif '/' in tagString:
-					tagPair = []
+				elif re.match('^\/([a-zA-Z])+\/$', tagString):
 					tagPair.append(tagString.strip('/'))
-				else:
-					tagPair = []
+				elif re.match('^([a-zA-Z0-9])+$', tagString):
 					tagPair.append(':' + tagString)
-				if not is_exclusive:
-					includeList.append(tagPair)
-				else:
-					excludeList.append(tagPair)
+				if len(tagPair) > 0:
+					if not is_exclusive:
+						includeList.append(tagPair)
+					else:
+						excludeList.append(tagPair)
+
 
 		#inclusive Q
 		incQ = []
@@ -322,6 +325,8 @@ def searchView(Request):
 		search_images.extend(queried_images)
 		search_images = list(set(search_images))
 
+	if(len(search_images) == 0):
+		search_images = Image.objects.all()
 	search_images = sorted(search_images, key=lambda x: x.upload_date, reverse=True)
 
 	paginator = Paginator(search_images, 24)
